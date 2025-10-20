@@ -60,7 +60,7 @@ FrogIT provides an interactive environment where users can:
 - As a user, I want to adjust each sound’s volume and intensity individually.
 
 **UI Mockup (concept):**
-![Mockup2](docs/mockup2.png)
+![Mockup2](mockup2.png)
 A simple interface with sliders for each sound, toggle buttons to enable/disable a sound, and a “Play” button.
 
 **UML Behavior (Activity Flow):**
