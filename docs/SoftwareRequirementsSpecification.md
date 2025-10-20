@@ -2,10 +2,6 @@
 
 ## Software Requirements Specification (SRS)
 
-> Based on a simplified version of the IBM Rational Unified Process (RUP) documentation template.
-
----
-
 ### 1. Introduction
 
 #### 1.1 Overview
@@ -63,8 +59,8 @@ FrogIT provides an interactive environment where users can:
 - As a user, I want to combine different ambient sounds (rain, forest, frogs, etc.) so I can create a relaxing atmosphere.
 - As a user, I want to adjust each sound’s volume and intensity individually.
 
-**UI Mockup (concept):**  
-![alt text](Isolated.png "Title")
+**UI Mockup (concept):**
+![Mockup2](docs/mockup2.png)
 A simple interface with sliders for each sound, toggle buttons to enable/disable a sound, and a “Play” button.
 
 **UML Behavior (Activity Flow):**
@@ -111,6 +107,9 @@ A visual overlay showing animated frogs jumping around the desktop.
 
 - **Programming Language:** C++
 - **Frameworks:** SFML for audio and graphics, Dear ImGui for GUI
+- **Building-Framework:** cmake with any compiler
+- **Testing:** Catch2
+- **Static Analysis:** cppcheck
 - **Platform:** Desktop (Windows, potentially cross-platform)
 - **Version Control:** GitHub
 - **Project Management:** YouTrack (Scrum-based)
