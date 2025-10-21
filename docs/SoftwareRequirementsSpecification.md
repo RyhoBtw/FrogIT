@@ -40,8 +40,6 @@ It does **not** include:
 - [Dear ImGui GitHub Repository](https://github.com/ocornut/imgui)
 - Internal project documentation in [**YouTrack**](https://youtrack.fsn1.mo-ri.tz/dashboard) and [**Team Blog**](https://github.com/RyhoBtw/FrogIT/discussions)
 
----
-
 ### 2. Functional Requirements
 
 #### 2.1 Overview
@@ -52,6 +50,8 @@ FrogIT provides an interactive environment where users can:
 - Adjust sound parameters such as volume and balance
 - Visualize animated frogs that jump and move across the desktop
 
+![use_cases](use_case_diagram.jpeg "Use Cases of FrogIT")
+
 #### 2.2 Feature 1 – Create Custom Soundscape
 
 **User Stories:**
@@ -60,15 +60,13 @@ FrogIT provides an interactive environment where users can:
 - As a user, I want to adjust each sound’s volume and intensity individually.
 
 **UI Mockup (concept):**
-![Mockup2](mockup2.png)
-A simple interface with sliders for each sound, toggle buttons to enable/disable a sound, and a “Play” button.
+![Mockup1](mockup_case1.png)
+A simple interface with sliders for each sound.
 
 **UML Behavior (Activity Flow):**
-![alt text](Isolated.png "Title")
+...
 
 **Estimated Effort:** Medium
-
----
 
 #### 2.3 Feature 2 – Animated Frog Visualization
 
@@ -78,15 +76,13 @@ A simple interface with sliders for each sound, toggle buttons to enable/disable
 - As a user, i want to still be able to use my desktop for work tasks, while the frogs are animated, so i can stay producitve.
 
 **UI Mockup (concept):**  
-![alt text](Isolated.png "Title")
+![Mockup2](mockup_case2.png)
 A visual overlay showing animated frogs jumping around the desktop.
 
 **UML Behavior (Sequence):**
-![alt text](Isolated.png "Title")
+...
 
 **Estimated Effort:** High
-
----
 
 ### 3. Non-Functional Requirements
 
@@ -96,12 +92,10 @@ A visual overlay showing animated frogs jumping around the desktop.
 | **Reliability**     | The application should handle missing or corrupted audio files gracefully.   |
 | **Performance**     | Real-time audio playback without noticeable lag or stutter.                  |
 | **Efficiency**      | Low CPU and memory usage to support background operation while relaxing.     |
-| **Maintainability** | The codebase should follow modular C++ practices for easy updates.           |
+| **Maintainability** | The codebase should follow best practices for C++                            |
 | **Flexibility**     | Easy to extend with new sounds or visual effects.                            |
-| **Testability**     | Each sound and animation module can be tested independently.                 |
+| **Testability**     | Each feature can be tested independently.                                    |
 | **Security**        | Local storage only, no external data transmission.                           |
-
----
 
 ### 4. Technical Constraints
 
