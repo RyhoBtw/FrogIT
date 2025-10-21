@@ -38,7 +38,8 @@ It does **not** include:
 
 - [SFML Documentation](https://www.sfml-dev.org/documentation/3.0.2)
 - [Dear ImGui GitHub Repository](https://github.com/ocornut/imgui)
-- Internal project documentation in [**YouTrack**](https://youtrack.fsn1.mo-ri.tz/dashboard) and [**Team Blog**](https://github.com/RyhoBtw/FrogIT/discussions)
+- Internal project documentation in [**YouTrack**](https://youtrack.fsn1.mo-ri.tz/dashboard) and https://github.com/RyhoBtw/FrogIT/tree/main/docs
+- Team Blog: [**Team Blog**](https://github.com/RyhoBtw/FrogIT/discussions)
 
 ### 2. Functional Requirements
 
@@ -47,10 +48,11 @@ It does **not** include:
 FrogIT provides an interactive environment where users can:
 
 - Mix and play multiple audio layers (rain, wind, frogs, fire crackling, etc.)
-- Adjust sound parameters such as volume and balance
+- Adjust sound parameters such as volume and frequency
 - Visualize animated frogs that jump and move across the desktop
 
-![use_cases](use_case_diagram.jpeg "Use Cases of FrogIT")
+![use_cases](use_case_diagram.jpeg)  
+*Current use cases of FrogIT*
 
 #### 2.2 Feature 1 – Create Custom Soundscape
 
@@ -59,7 +61,7 @@ FrogIT provides an interactive environment where users can:
 - As a user, I want to combine different ambient sounds (rain, forest, frogs, etc.) so I can create a relaxing atmosphere.
 - As a user, I want to adjust each sound’s volume and intensity individually.
 
-**UI Mockup (concept):**
+**UI Mockup (concept):**  
 ![Mockup1](mockup_case1.png)
 A simple interface with sliders for each sound.
 
@@ -104,7 +106,7 @@ A visual overlay showing animated frogs jumping around the desktop.
 - **Building-Framework:** cmake with any compiler
 - **Testing:** Catch2
 - **Static Analysis:** cppcheck
-- **Platform:** Desktop (Windows, potentially cross-platform)
+- **Platform:** Desktop (cross-platform via cmake)
 - **Version Control:** GitHub
 - **Project Management:** YouTrack (Scrum-based)
 - **Sprint Duration:** 1 week
