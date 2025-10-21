@@ -62,7 +62,7 @@ FrogIT provides an interactive environment where users can:
 - As a user, I want to adjust each sound’s volume and intensity individually.
 
 **UI Mockup (concept):**  
-![Mockup1](mockup_case1.png)
+![Mockup1](mockup_case1.png)  
 A simple interface with sliders for each sound.
 
 **UML Behavior (Activity Flow):**
@@ -78,7 +78,7 @@ A simple interface with sliders for each sound.
 - As a user, i want to still be able to use my desktop for work tasks, while the frogs are animated, so i can stay producitve.
 
 **UI Mockup (concept):**  
-![Mockup2](mockup_case2.png)
+![Mockup2](mockup_case2.png)  
 A visual overlay showing animated frogs jumping around the desktop.
 
 **UML Behavior (Sequence):**
