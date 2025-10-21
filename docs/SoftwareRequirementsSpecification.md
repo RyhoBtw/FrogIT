@@ -75,7 +75,7 @@ A simple interface with sliders for each sound.
 **User Stories:**
 
 - As a user, I want to see animated frogs jumping while the sound is playing so that I can enjoy a more engaging relaxation experience.
-- As a user, i want to still be able to use my desktop for work tasks, while the frogs are animated, so i can stay producitve.
+- As a user, i want to still be able to use my desktop for work tasks, while the frogs are animated, so i can stay productive.
 
 **UI Mockup (concept):**  
 ![Mockup2](mockup_case2.png)  
