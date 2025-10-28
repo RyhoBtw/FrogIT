@@ -1,0 +1,45 @@
+@startuml
+autonumber
+
+actor Benutzer
+participant "UI (ImGUI)" as UI
+participant "Controller" as Controller
+participant "Audio-Engine (SFML)" as Audio
+
+Benutzer -> UI: Passt Lautstärke/Intensität an
+activate UI
+UI -> Controller: updateVolume(sound, value)
+activate Controller
+Controller -> Controller: Speichere neue Lautstärke für Sound-ID
+deactivate Controller
+deactivate UI
+
+... Anpassung abgeschlossen ...
+
+Benutzer -> UI: Klickt auf 'Play'-Button
+activate UI
+UI -> Controller: startSoundscape()
+activate Controller
+
+group Wiedergabe starten
+  loop für jeden aktiven Sound
+    Controller -> Audio: loadSound(filename)
+
+
+    Controller -> Audio: setVolume(sound, volume_value)
+    activate Audio
+    deactivate Audio
+
+    Controller -> Audio: startPlayback(sound)
+    activate Audio
+    deactivate Audio
+  end
+end
+
+Controller -> Controller: setStatus(Playing)
+Controller --> UI: updateStatus(status)
+deactivate Controller
+UI -> UI: updateUIButton(Pause)
+deactivate UI
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+autonumber
+
+actor Benutzer
+participant "Frosch-UI-Element" as FrogUI
+participant "Frosch-Logik (Controller)" as Controller
+participant "Sound-Manager" as Sound
+
+Benutzer -> FrogUI: Klickt auf Frosch
+activate FrogUI
+FrogUI -> Controller: handleFrogClick()
+activate Controller
+note over Controller: [Start: Aktion triggert Phrase]
+
+Controller -> Sound: PlayCroakSound()
+activate Sound
+deactivate Sound
+
+Controller -> Controller: randomText() 
+
+Controller -> FrogUI: CreateSpeechbubble(phrase)
+
+deactivate Controller
+deactivate FrogUI
+
+@enduml
