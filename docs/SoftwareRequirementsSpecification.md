@@ -84,6 +84,40 @@ A visual overlay showing animated frogs jumping around the desktop.
 **UML Behavior (Sequence):**
 ...
 
+#### 2.4 Feature 3 - Interactive Frogs
+
+**User Stories:**
+
+- As a user, I want frogs to say funny phrases when i click them.
+- As a user, I want frogs to make a croak when i click them.
+- As a user, I want to receive mocking phrases that depend on the local time.
+
+**UI Mockup (concept):**  
+
+**UML Behavior (Sequence):**  
+
+#### 2.5 Feature 4 - Frog Trolling
+
+**User Stories:**
+
+- As a user, I want frogs to sometimes catch and swallow the mouse cursor.
+- As a user, I want frogs to sometimes explode in sparkles when clicked.
+
+**UI Mockup (concept):**  
+
+**UML Behavior (Sequence):**  
+
+#### 2.6 Feature 5 - Soundscape Presets
+
+**User Stories:**
+
+- As a user, I want to be able to configure a soundscape.
+- As a user, I want to be able to load and save multiple soundscapes
+
+**UI Mockup (concept):**  
+
+**UML Behavior (Sequence):**
+
 **Estimated Effort:** High
 
 ### 3. Non-Functional Requirements
