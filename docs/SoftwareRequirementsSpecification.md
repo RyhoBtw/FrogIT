@@ -65,7 +65,7 @@ FrogIT provides an interactive environment where users can:
 ![Mockup1](mockup_case1.png)  
 A simple interface with sliders for each sound.
 
-**UML Behavior (Sequence):**
+**UML Behavior (Sequence):**  
 ![Sequence1](Sequence_Sounds.jpg)
 
 **Estimated Effort:** Medium
@@ -81,7 +81,7 @@ A simple interface with sliders for each sound.
 ![Mockup2](mockup_case2.png)  
 A visual overlay showing animated frogs jumping around the desktop.
 
-**UML Behavior (Activity Flow):**
+**UML Behavior (Activity Flow):**  
 ![Behavior1](Behavior_AnimateFrog.png)
 
 #### 2.4 Feature 3 - Interactive Frogs
@@ -97,7 +97,7 @@ A visual overlay showing animated frogs jumping around the desktop.
 **UML Behavior (Activity Flow):**  
 ![Behavior2](Behavior_FrogOnClick.png)
 
-**UML Behavior (Sequence):**
+**UML Behavior (Sequence):**  
 ![Sequence1](Sequence_Text.jpg)
 
 **Estimated Effort:** Low
@@ -125,7 +125,7 @@ A visual overlay showing animated frogs jumping around the desktop.
 
 **UI Mockup (concept):**  
 
-**UML Behavior (Activity Flow):**
+**UML Behavior (Activity Flow):**  
 
 **Estimated Effort:** Low
 
