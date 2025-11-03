@@ -1,0 +1,58 @@
+@startuml
+
+class FrogApp {
+    - FrogSettingsUI settingsUI
+    + run()
+    + renderUI()
+}
+
+class Soundscape {
+    - vector<Sound> sounds
+    + playSounds(int deltaTime)
+}
+
+class Sound {
+    - int volume
+    - int frequency
+    - Resource resource
+    + playSound()
+    + stopSound()
+}
+
+class FrogSettingsUI {
+    - int profileIndex
+    - Soundscape soundscape
+}
+
+class Frog {
+    - Position: frogPosition
+    - Resource: animationResource
+    + jump()
+    + updateAnimation()
+    + trollUser(Position mouseCursor)
+}
+
+class Position {
+    - int xPosition
+    - int yPosition
+}
+
+class Resource {
+    - ResourceType type
+}
+
+enum ResourceType {
+    - ResourceType SOUND
+    - ResourceType ANIMATION
+    - ResourceType TEXTURE
+}
+
+FrogSettingsUI *-- Soundscape
+FrogApp *-- FrogSettingsUI
+Soundscape "1" o-- "n" Sound
+Frog *-- Position
+Frog *-- Resource
+Resource --> ResourceType
+Sound *-- Resource
+
+@enduml

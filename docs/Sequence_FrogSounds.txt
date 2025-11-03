@@ -1,45 +1,24 @@
 @startuml
-autonumber
 
-actor Benutzer
-participant "UI (ImGUI)" as UI
-participant "Controller" as Controller
-participant "Audio-Engine (SFML)" as Audio
+actor User
+participant "FrogSettingsUI" as UI
+participant "Soundscape" as SS
+participant "Sound" as Sound
+participant "Resource" as Resource
 
-Benutzer -> UI: Passt Lautstärke/Intensität an
-activate UI
-UI -> Controller: updateVolume(sound, value)
-activate Controller
-Controller -> Controller: Speichere neue Lautstärke für Sound-ID
-deactivate Controller
-deactivate UI
+User-> UI : Adjust Sound Settings
+UI -> SS : playAll()
 
-... Anpassung abgeschlossen ...
-
-Benutzer -> UI: Klickt auf 'Play'-Button
-activate UI
-UI -> Controller: startSoundscape()
-activate Controller
-
-group Wiedergabe starten
-  loop für jeden aktiven Sound
-    Controller -> Audio: loadSound(filename)
-
-
-    Controller -> Audio: setVolume(sound, volume_value)
-    activate Audio
-    deactivate Audio
-
-    Controller -> Audio: startPlayback(sound)
-    activate Audio
-    deactivate Audio
-  end
+loop for each active sound
+    SS -> Sound : play()
+    activate Sound
+    Sound -> Resource : load(ResourceType.SOUND)
+    Resource --> Sound : return loaded sound data
+    Sound -> Sound : start audio stream (volume, frequency)
+    deactivate Sound
 end
 
-Controller -> Controller: setStatus(Playing)
-Controller --> UI: updateStatus(status)
-deactivate Controller
-UI -> UI: updateUIButton(Pause)
-deactivate UI
+SS --> UI : playback started confirmation
+UI -> User: Display "Playing soundscape"
 
 @enduml
