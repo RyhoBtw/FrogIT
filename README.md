@@ -10,6 +10,8 @@ curl.exe -LJO "https://github.com/aminya/setup-cpp/releases/download/v1.7.1/setu
 ```
 #### Generate Visual Studio Solution
 ```powershell
+git clone https://github.com/RyhoBtw/FrogIT
+cd FrogIT
 cmake -S . -B ./build -G "Visual Studio 17 2022"
 ```
 #### Open and build in Visual Studio 2022
@@ -23,10 +25,12 @@ chmod +x setup-cpp-x64-linux
 ```
 #### Install dependencies
 ```bash
-./setup-cpp-x64-linux --compiler gcc --cmake true --ninja true --ccache true --cppcheck true
+sudo ./setup-cpp-x64-linux --compiler gcc --cmake true --ninja true --ccache true --cppcheck true
 ```
 #### Generate build files
 ```bash
+git clone https://github.com/RyhoBtw/FrogIT
+cd FrogIT
 cmake -S . -B ./build
 ```
 #### Build project
