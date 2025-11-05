@@ -16,7 +16,7 @@ cmake -S . -B ./build -G "Visual Studio 17 2022"
 ```
 #### Open and build in Visual Studio 2022
 
-# Building (Ubuntu)
+# Building (Linux)
 
 #### Run in shell
 ```bash
