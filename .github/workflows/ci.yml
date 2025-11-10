@@ -160,8 +160,8 @@ jobs:
           gcovr: true
           opencppcoverage: true
       
-      - name: Unix - Additional Dependencies
-        if: runner.os != 'Windows'
+      - name: Linux - Additional Dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt update
           sudo apt install -y \
@@ -175,6 +175,12 @@ jobs:
             libgl1-mesa-dev \
             libegl1-mesa-dev \
             libfreetype-dev
+            
+      - name: MacOS - Additional Dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install freetype flac libvorbis mesa
 
       - name: Configure CMake
         run: |
