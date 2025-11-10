@@ -44,14 +44,11 @@ function(
       endif()
     endif()
   elseif(MSVC)
-    if(${ENABLE_SANITIZER_ADDRESS})
-      list(APPEND SANITIZERS "address")
-    endif()
     if(${ENABLE_SANITIZER_LEAK}
        OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}
        OR ${ENABLE_SANITIZER_THREAD}
        OR ${ENABLE_SANITIZER_MEMORY})
-      message(WARNING "MSVC only supports address sanitizer")
+      message(WARNING "MSVC only supports address sanitizer (sometimes)")
     endif()
   endif()
 
