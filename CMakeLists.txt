@@ -104,7 +104,7 @@ include(cmake/PackageProject.cmake)
 # we know we want to ship
 FrogIT_package_project(
   TARGETS
-  intro
+  FrogITApp
   FrogIT_options
   FrogIT_warnings
   # FIXME: this does not work! CK
