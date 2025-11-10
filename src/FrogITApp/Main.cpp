@@ -34,7 +34,7 @@ int main()
       if (const auto *e = event->getIf<sf::Event::MouseButtonPressed>()) {
         if (e->button == sf::Mouse::Button::Left) { 
             dragging = true; 
-            dragOffset = sf::Mouse::getPosition(window);// position inside window
+            dragOffset = sf::Mouse::getPosition(window); // position inside window
         }
       }
 
@@ -48,15 +48,14 @@ int main()
       // --- Apply raw mouse delta while dragging ---
       if (dragging) {
         if (event->is<sf::Event::MouseMovedRaw>() || event->is<sf::Event::MouseMoved>()) {
-          sf::Vector2i mouseDesktop = sf::Mouse::getPosition();
-          window.setPosition(mouseDesktop - dragOffset);
+            window.setPosition(sf::Mouse::getPosition() - dragOffset);
         }
       }
     }
 
     ImGui::SFML::Update(window, clock.restart());
 
-    window.clear(sf::Color::Green);
+    window.clear(sf::Color::Transparent);
 
     // Content
 
