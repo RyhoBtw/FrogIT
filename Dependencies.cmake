@@ -39,5 +39,47 @@ function(FrogIT_setup_dependencies)
   if(NOT TARGET tools::tools)
     cpmaddpackage("gh:lefticus/tools#update_build_system")
   endif()
+	
+	if(NOT TARGET SFML::SFML
+		cpmaddpackage(
+			NAME 
+			SFML
+			GIT_TAG 
+			3.0.2
+			GITHUB_REPOSITORY 
+			SFML/SFML
+			GIT_SHALLOW 
+			TRUE
+			SYSTEM 
+			TRUE)
+	endif()
+	
+	# Fetch Dear ImGui
+	if(NOT TARGET ImGui)
+		cpmaddpackage(
+			NAME ImGui
+			GITHUB_REPOSITORY ocornut/imgui
+			GIT_TAG v1.91.1
+			GIT_SHALLOW TRUE
+			SYSTEM TRUE
+		)
+	endif()
+
+	# Make ImGui's source directory available
+	set(IMGUI_DIR ${ImGui_SOURCE_DIR})
+
+	# Disable ImGui-SFML's internal find_package(SFML)
+	set(IMGUI_SFML_FIND_SFML OFF)
+
+	# Fetch ImGui-SFML binding
+	if(NOT TARGET ImGui-SFML)
+		cpmaddpackage(
+			NAME ImGui-SFML
+			GITHUB_REPOSITORY SFML/imgui-sfml
+			GIT_TAG v3.0
+			GIT_SHALLOW TRUE
+			SYSTEM TRUE
+		)
+	endif()
 
 endfunction()
