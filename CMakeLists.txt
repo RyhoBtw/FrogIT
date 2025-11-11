@@ -100,6 +100,14 @@ endif()
 
 include(cmake/PackageProject.cmake)
 
+# Move assets to build output
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+)
+add_dependencies(FrogITApp copy_assets)
+
 # Add other targets that you want installed here, by default we just package the one executable
 # we know we want to ship
 FrogIT_package_project(
