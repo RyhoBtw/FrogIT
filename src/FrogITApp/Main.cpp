@@ -6,7 +6,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Window.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 
 #include <imgui-SFML.h>
 #include <imgui.h>
@@ -21,9 +21,10 @@
 #endif
 
 #ifdef __linux__
+#include <X11/X.h>
 #include <X11/Xlib.h>// provides ::Window and XOpenDisplay
 /* fix X11 None collision with sf::Style::None if needed */
-#undef None
+//#undef None
 #endif
 
 #ifdef __APPLE__
@@ -40,6 +41,7 @@ constexpr float UI_CURSOR_OFFSET_Y = 24.0F;
 constexpr float UI_BUTTON_WIDTH_DEFAULT = 20.0F;
 constexpr float UI_SLIDER_MIN = 0.0F;
 constexpr float UI_SLIDER_MAX = 10.0F;
+constexpr float UI_DISTANCE_MULT_BUTTON = 2.5F;
 
 void minimizeWindow(sf::RenderWindow &window)
 {
@@ -51,8 +53,8 @@ void minimizeWindow(sf::RenderWindow &window)
     objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);
 #elif defined(__linux__)
     Display *display = XOpenDisplay(nullptr);
-    if (!display) { return; }
-    ::Window win = window.getNativeHandle();
+    if (display == nullptr) { return; }
+    const ::Window win = window.getNativeHandle();
     XIconifyWindow(display, win, DefaultScreen(display));
     XFlush(display);
     XCloseDisplay(display);
@@ -139,8 +141,8 @@ int main()
         ImGui::SetNextWindowSize(ImVec2(FRAME_INNER_X, FRAME_INNER_Y), ImGuiCond_Always);
         ImGui::Begin("UI",
             &open,
-            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse
-                | ImGuiWindowFlags_NoTitleBar);
+            static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize
+                                          | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar));
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
         ImGui::SliderFloat("Volume1", &vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
@@ -149,7 +151,7 @@ int main()
         const float windowWidth = ImGui::GetWindowSize().x;
         const float buttonWidth = UI_BUTTON_WIDTH_DEFAULT;
         ImGui::SetCursorPos(ImVec2(
-            windowWidth - (2.5F * buttonWidth) - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
+            windowWidth - (UI_DISTANCE_MULT_BUTTON * buttonWidth) - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
 
         ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 50, 50, 255)); // red
         if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) { minimizeWindow(window); }

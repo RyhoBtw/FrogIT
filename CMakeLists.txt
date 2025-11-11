@@ -119,6 +119,12 @@ FrogIT_package_project(
   # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings
 )
 
+# Add assets here
+install(
+    FILES ${CMAKE_SOURCE_DIR}/assets/frame.png
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
