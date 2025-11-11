@@ -13,6 +13,7 @@
 #ifdef __linux__
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
+#undef None// <-- fixes collision with sf::Style::None
 #endif
 
 #ifdef __APPLE__
