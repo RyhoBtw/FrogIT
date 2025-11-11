@@ -24,7 +24,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>// provides ::Window and XOpenDisplay
 /* fix X11 None collision with sf::Style::None if needed */
-//#undef None
+#undef None
 #endif
 
 #ifdef __APPLE__
