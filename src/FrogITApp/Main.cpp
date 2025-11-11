@@ -141,8 +141,12 @@ int main()
         ImGui::SetNextWindowSize(ImVec2(FRAME_INNER_X, FRAME_INNER_Y), ImGuiCond_Always);
         ImGui::Begin("UI",
             &open,
-            static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize
-                                          | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar));
+            static_cast<ImGuiWindowFlags>(
+                static_cast<unsigned int>(ImGuiWindowFlags_NoMove | 
+                                          ImGuiWindowFlags_NoResize | 
+                                          ImGuiWindowFlags_NoCollapse | 
+                                          ImGuiWindowFlags_NoTitleBar)));
+
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
         ImGui::SliderFloat("Volume1", &vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
