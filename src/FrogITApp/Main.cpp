@@ -10,6 +10,16 @@
 #pragma comment(lib, "Dwmapi.lib")
 #endif
 
+#ifdef __linux__
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#endif
+
+#ifdef __APPLE__
+#include <objc/objc.h>
+#include <objc/message.h>
+#endif
+
 const int FRAME_TOP_BORDER_Y = 116;
 const int FRAME_LEFT_BORDER_X = 64;
 const int FRAME_INNER_X = 311;
@@ -21,8 +31,8 @@ void minimizeWindow(sf::RenderWindow &window)
     HWND hwnd = window.getNativeHandle();
     ShowWindow(hwnd, SW_MINIMIZE);
 #elif defined(__APPLE__)
-    void *nsWindow = (void *)window.getNativeHandle();
-    ((void (*)(id, SEL))objc_msgSend)((id)nsWindow, sel_getUid("miniaturize:"), nil);
+    void *nsWindow = window.getNativeHandle();
+    objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);
 #elif defined(__linux__)
     Display *display = XOpenDisplay(NULL);
     if (!display) return;

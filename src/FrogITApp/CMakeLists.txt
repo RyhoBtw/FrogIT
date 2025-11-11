@@ -19,5 +19,9 @@ target_link_libraries(
 		SFML::Graphics 
 		ImGui-SFML::ImGui-SFML
 		fmt::fmt)
+		
+if(APPLE)
+  target_link_libraries(FrogITApp PRIVATE "-framework Cocoa")
+endif()
 					
 target_include_directories(FrogITApp PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
