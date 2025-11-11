@@ -4,8 +4,8 @@
 #include <iostream>
 
 #ifdef _WIN32
-#include <windows.h>
 #include <Dwmapi.h>
+#include <windows.h>
 
 #pragma comment(lib, "Dwmapi.lib")
 #endif
@@ -16,8 +16,8 @@
 #endif
 
 #ifdef __APPLE__
-#include <objc/objc.h>
 #include <objc/message.h>
+#include <objc/objc.h>
 #endif
 
 const int FRAME_TOP_BORDER_Y = 116;
@@ -55,13 +55,14 @@ int main()
 
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     auto window =
-        sf::RenderWindow(sf::VideoMode({ frameTexture.getSize().x, frameTexture.getSize().y }, desktop.bitsPerPixel),
+        sf::RenderWindow(
+        sf::VideoMode(sf::Vector2u(frameTexture.getSize().x, frameTexture.getSize().y), desktop.bitsPerPixel),
             "FrogIT",
-            sf::Style::None // removes OS title bar and borders
+            sf::Style::None// removes OS title bar and borders
         );
     window.setFramerateLimit(60);
     if (!ImGui::SFML::Init(window)) return -1;
-    
+
     // TODO Handle Linux glass-window
 #ifdef _WIN32
     MARGINS margins;
@@ -109,28 +110,23 @@ int main()
         bool open = true;
         ImGui::SetNextWindowPos(ImVec2(FRAME_LEFT_BORDER_X, FRAME_TOP_BORDER_Y), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(FRAME_INNER_X, FRAME_INNER_Y), ImGuiCond_Always);
-        ImGui::Begin(
-                "UI",
-                &open,
-                ImGuiWindowFlags_NoMove | 
-                ImGuiWindowFlags_NoResize | 
-                ImGuiWindowFlags_NoCollapse |
-                ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin("UI",
+            &open,
+            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse
+                | ImGuiWindowFlags_NoTitleBar);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 24);
         ImGui::SliderFloat("Volume1", &vol, 0.0f, 10.0f);
         ImGui::SliderFloat("Frequency1", &freq, 0.0f, 10.0f);
 
         float windowWidth = ImGui::GetWindowSize().x;
         float buttonWidth = 20.0f;
-        ImGui::SetCursorPos(ImVec2(windowWidth - (3 * buttonWidth) - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
+        ImGui::SetCursorPos(ImVec2(
+            windowWidth - (3 * buttonWidth) - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
         ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 50, 50, 255));// red
-        if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) { 
-            minimizeWindow(window);
-        }
-        ImGui::SetCursorPos(ImVec2(windowWidth - buttonWidth - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
-        if (ImGui::Button("X", ImVec2(buttonWidth, buttonWidth))) { 
-            window.close(); 
-        }
+        if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) { minimizeWindow(window); }
+        ImGui::SetCursorPos(
+            ImVec2(windowWidth - buttonWidth - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
+        if (ImGui::Button("X", ImVec2(buttonWidth, buttonWidth))) { window.close(); }
         ImGui::PopStyleColor();
 
         ImGui::End();
