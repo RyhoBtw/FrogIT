@@ -54,10 +54,13 @@ void minimizeWindow(sf::RenderWindow &window)
 #elif defined(__linux__)
     Display *display = XOpenDisplay(nullptr);
     if (display == nullptr) { return; }
-    const ::Window win = window.getNativeHandle();
-    XIconifyWindow(display, win, DefaultScreen(display));
+    xev.type = ClientMessage;
+    xev.xclient.window = win;
+    xev.xclient.message_type = XInternAtom(display, "WM_CHANGE_STATE", False);
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = IconicState;
+    XSendEvent(display, DefaultRootWindow(display), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
     XFlush(display);
-    XCloseDisplay(display);
 #endif
 }
 
@@ -114,12 +117,30 @@ int main()
 
     if (!ImGui::SFML::Init(window)) { return -1; }
 
-    // TODO: Handle Linux glass-window specifics if needed
+    // TODO: Handle Linux invisible window specifics
 #ifdef _WIN32
     MARGINS margins;
     margins.cxLeftWidth = -1;
     SetWindowLong(window.getNativeHandle(), GWL_STYLE, WS_POPUP | WS_VISIBLE);
     DwmExtendFrameIntoClientArea(window.getNativeHandle(), &margins);
+#endif
+
+#ifdef __linux__
+    Display *display = XOpenDisplay(nullptr);
+    if (!display) {
+        fprintf(stderr, "Failed to open X display\n");
+        return;
+    }
+
+    ::Window xwindow = window.getSystemHandle();
+
+    // Set the window opacity (0xFFFFFFFF = opaque, 0x00000000 = fully transparent)
+    unsigned long opacity = 0;// 0 = fully transparent
+    Atom property = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
+    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&opacity, 1);
+
+    XFlush(display);
+    XCloseDisplay(display);
 #endif
 
     sf::Clock clock;
