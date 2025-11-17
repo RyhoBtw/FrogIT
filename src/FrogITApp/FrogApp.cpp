@@ -34,19 +34,26 @@
 #include <objc/objc.h>
 #endif
 
+#include "FrogApp.hpp"
+
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
 
-FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }
+FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, frog{ "logo.png" }
 {
     const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     const unsigned int width = m_frameSprite.getTexture().getSize().x;
     const unsigned int height = m_frameSprite.getTexture().getSize().y;
 
-    // Create blank window, no titlebar
-    m_window.create(sf::VideoMode(sf::Vector2u(width, height), desktop.bitsPerPixel), "FrogIT", sf::Style::None);
+    // Create blank window, no titlebar (options)
+    m_window.create(sf::VideoMode(sf::Vector2u(width, height), desktop.bitsPerPixel), "FrogITSettings", sf::Style::None);
+
+    // Create blank window, no titlebar (InteractionLayer)
+    m_interactionLayerWindow.create(sf::VideoMode(desktop.size, desktop.bitsPerPixel), "InteractionLayer", sf::Style::None);
 
     m_window.setFramerateLimit(FRAMERATE_LIMIT);
+
+    m_interactionLayerWindow.setFramerateLimit(FRAMERATE_LIMIT);
 
     if (!ImGui::SFML::Init(m_window)) {
         std::cout << "Unable to initialize ImGui\n";
@@ -55,32 +62,10 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }
         exit(-1);
     }
 
-    // Turn windows invisible
-    // TODO: Handle Linux invisible window specifics
-#ifdef _WIN32
-    MARGINS margins;
-    margins.cxLeftWidth = -1;
-    SetWindowLong(m_window.getNativeHandle(), GWL_STYLE, WS_POPUP | WS_VISIBLE);
-    DwmExtendFrameIntoClientArea(m_window.getNativeHandle(), &margins);
-#endif
-
-#ifdef __linux__
-    Display* display = XOpenDisplay(nullptr);
-    if (!display) {
-        fprintf(stderr, "Failed to open X display\n");
-        return;
-    }
-
-    ::Window xwindow = m_window.getSystemHandle();
-
-    // Set the window opacity (0xFFFFFFFF = opaque, 0x00000000 = fully transparent)
-    unsigned long opacity = 0;// 0 = fully transparent
-    Atom property = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
-    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
-
-    XFlush(display);
-    XCloseDisplay(display);
-#endif
+    turnWindowBackgroundInvisible(m_window);
+    setWindowTopMost(m_window);
+    setWindowClickthrough(m_interactionLayerWindow);
+    setWindowTopMost(m_interactionLayerWindow);
 }
 
 FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
@@ -96,8 +81,7 @@ void FrogApp::processWindowEvents()
 
         // --- Start drag ---
         if (const auto* pressedEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
-            if (pressedEvent->button == sf::Mouse::Button::Left
-                && sf::Mouse::getPosition(m_window).y < FRAME_TOP_BORDER_Y) {
+            if (pressedEvent->button == sf::Mouse::Button::Left && sf::Mouse::getPosition(m_window).y < FRAME_TOP_BORDER_Y) {
                 m_isDragging = true;
                 m_dragOffset = sf::Mouse::getPosition(m_window);// position inside window
             }
@@ -131,11 +115,8 @@ void FrogApp::render()
     bool open = true;
     ImGui::SetNextWindowPos(ImVec2(FRAME_LEFT_BORDER_X, FRAME_TOP_BORDER_Y), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(FRAME_INNER_X, FRAME_INNER_Y), ImGuiCond_Always);
-    ImGui::Begin("UI",
-        &open,
-        static_cast<ImGuiWindowFlags>(
-            static_cast<unsigned int>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse
-                                      | ImGuiWindowFlags_NoTitleBar)));
+    ImGui::Begin(
+        "UI", &open, static_cast<ImGuiWindowFlags>(static_cast<unsigned int>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)));
 
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
@@ -144,17 +125,14 @@ void FrogApp::render()
 
     const float windowWidth = ImGui::GetWindowSize().x;
     const float buttonWidth = UI_BUTTON_WIDTH_DEFAULT;
-    ImGui::SetCursorPos(
-        ImVec2(windowWidth - (UI_DISTANCE_MULT_BUTTON * buttonWidth) - ImGui::GetStyle().WindowPadding.x,
-            ImGui::GetStyle().WindowPadding.y));
+    ImGui::SetCursorPos(ImVec2(windowWidth - (UI_DISTANCE_MULT_BUTTON * buttonWidth) - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
 
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 50, 50, 255));// red
     if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) {
         minimizeWindow(m_window);
     }
 
-    ImGui::SetCursorPos(
-        ImVec2(windowWidth - buttonWidth - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
+    ImGui::SetCursorPos(ImVec2(windowWidth - buttonWidth - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
     if (ImGui::Button("X", ImVec2(buttonWidth, buttonWidth))) {
         m_window.close();
     }
@@ -166,6 +144,12 @@ void FrogApp::render()
 
     ImGui::SFML::Render(m_window);
     m_window.display();
+
+    m_interactionLayerWindow.clear(sf::Color::Transparent);
+
+    m_interactionLayerWindow.draw(frog.getSprite());
+
+    m_interactionLayerWindow.display();
 }
 
 void FrogApp::minimizeWindow(sf::RenderWindow& window)
@@ -188,5 +172,54 @@ void FrogApp::minimizeWindow(sf::RenderWindow& window)
     xev.xclient.data.l[0] = IconicState;
     XSendEvent(display, DefaultRootWindow(display), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
     XFlush(display);
+#endif
+}
+
+void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
+{
+    // Turn window invisible
+    // TODO: Handle Linux invisible window specifics
+#ifdef _WIN32
+    MARGINS margins;
+    margins.cxLeftWidth = -1;
+    SetWindowLong(window.getNativeHandle(), GWL_STYLE, WS_POPUP | WS_VISIBLE);
+    DwmExtendFrameIntoClientArea(window.getNativeHandle(), &margins);
+#endif
+
+#ifdef __APPLE__
+
+#endif
+
+#ifdef __linux__
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) {
+        fprintf(stderr, "Failed to open X display\n");
+        return;
+    }
+
+    ::Window xwindow = window.getSystemHandle();
+
+    // Set the window opacity (0xFFFFFFFF = opaque, 0x00000000 = fully transparent)
+    unsigned long opacity = 0;// 0 = fully transparent
+    Atom property = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
+    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
+
+    XFlush(display);
+    XCloseDisplay(display);
+#endif
+}
+
+
+
+void FrogApp::setWindowTopMost(sf::RenderWindow& window)
+{
+#ifdef _WIN32
+    SetWindowPos(window.getNativeHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+#endif
+
+#ifdef __APPLE__
+#endif
+
+#ifdef __linux__
 #endif
 }
