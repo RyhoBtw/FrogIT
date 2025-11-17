@@ -5,21 +5,20 @@
 class FrogApp
 {
   public:
-    FrogApp() = default;
-    bool init();
-    bool isRunning();
+    FrogApp();
+    ~FrogApp();
     void render();
     void processWindowEvents();
+    const sf::RenderWindow& getWindow();
 
   private:
     void minimizeWindow(sf::RenderWindow &window);
 
     sf::RenderWindow m_window;
     sf::Clock m_clock;
-    bool m_isDragging = false;
     sf::Vector2i m_dragOffset = { 0, 0 };
+    sf::Sprite m_frameSprite;
+    bool m_isDragging = false;
     float m_vol = 0.0F;
     float m_freq = 0.0F;
-    bool m_isRunning = true;
-    const sf::Sprite m_frameSprite;
 };

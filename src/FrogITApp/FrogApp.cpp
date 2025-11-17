@@ -16,8 +16,6 @@
 #include <iostream>
 #include <optional>
 
-#include "Constants.hpp"
-
 #ifdef _WIN32
 #include <Dwmapi.h>
 #include <windows.h>
@@ -36,32 +34,25 @@
 #include <objc/objc.h>
 #endif
 
-bool FrogApp::init()
+#include "Constants.hpp"
+#include "ResourceManager.hpp"
+
+FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }
 {
-    // Load custom frame
-    sf::Texture frameTexture;
-    if (!frameTexture.loadFromFile("frame.png")) {
-        std::cout << "Unable to load frame.png\n";
-        return false;
-    }
-
-    m_frameSprite.;
-
     const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    const unsigned int width = frameTexture.getSize().x;
-    const unsigned int height = frameTexture.getSize().y;
+    const unsigned int width = m_frameSprite.getTexture().getSize().x;
+    const unsigned int height = m_frameSprite.getTexture().getSize().y;
 
     // Create blank window, no titlebar
-    m_window.create(sf::VideoMode(sf::Vector2u(width, height), desktop.bitsPerPixel),
-        "FrogIT",
-        sf::Style::None
-    );
+    m_window.create(sf::VideoMode(sf::Vector2u(width, height), desktop.bitsPerPixel), "FrogIT", sf::Style::None);
 
     m_window.setFramerateLimit(FRAMERATE_LIMIT);
 
     if (!ImGui::SFML::Init(m_window)) {
-        std::cout << "Unable to load ImGui\n";
-        return false;
+        std::cout << "Unable to initialize ImGui\n";
+        std::cout << "Waiting for input to close the application..." << '\n';
+        std::cin.get();
+        exit(-1);
     }
 
     // Turn windows invisible
@@ -74,7 +65,7 @@ bool FrogApp::init()
 #endif
 
 #ifdef __linux__
-    Display *display = XOpenDisplay(nullptr);
+    Display* display = XOpenDisplay(nullptr);
     if (!display) {
         fprintf(stderr, "Failed to open X display\n");
         return;
@@ -85,22 +76,26 @@ bool FrogApp::init()
     // Set the window opacity (0xFFFFFFFF = opaque, 0x00000000 = fully transparent)
     unsigned long opacity = 0;// 0 = fully transparent
     Atom property = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
-    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&opacity, 1);
+    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
 
     XFlush(display);
     XCloseDisplay(display);
 #endif
 }
 
+FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
+
 void FrogApp::processWindowEvents()
 {
     while (const std::optional<sf::Event> event = m_window.pollEvent()) {
         ImGui::SFML::ProcessEvent(m_window, *event);
 
-        if (event->is<sf::Event::Closed>()) { m_window.close(); }
+        if (event->is<sf::Event::Closed>()) {
+            m_window.close();
+        }
 
         // --- Start drag ---
-        if (const auto *pressedEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
+        if (const auto* pressedEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (pressedEvent->button == sf::Mouse::Button::Left
                 && sf::Mouse::getPosition(m_window).y < FRAME_TOP_BORDER_Y) {
                 m_isDragging = true;
@@ -109,8 +104,10 @@ void FrogApp::processWindowEvents()
         }
 
         // --- Stop drag ---
-        if (const auto *releasedEvent = event->getIf<sf::Event::MouseButtonReleased>()) {
-            if (releasedEvent->button == sf::Mouse::Button::Left) { m_isDragging = false; }
+        if (const auto* releasedEvent = event->getIf<sf::Event::MouseButtonReleased>()) {
+            if (releasedEvent->button == sf::Mouse::Button::Left) {
+                m_isDragging = false;
+            }
         }
 
         // --- Apply raw mouse delta while dragging ---
@@ -121,6 +118,8 @@ void FrogApp::processWindowEvents()
         }
     }
 }
+
+const sf::RenderWindow& FrogApp::getWindow() { return m_window; }
 
 void FrogApp::render()
 {
@@ -150,32 +149,38 @@ void FrogApp::render()
             ImGui::GetStyle().WindowPadding.y));
 
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(200, 50, 50, 255));// red
-    if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) { minimizeWindow(m_window); }
+    if (ImGui::Button("-", ImVec2(buttonWidth, buttonWidth))) {
+        minimizeWindow(m_window);
+    }
 
     ImGui::SetCursorPos(
         ImVec2(windowWidth - buttonWidth - ImGui::GetStyle().WindowPadding.x, ImGui::GetStyle().WindowPadding.y));
-    if (ImGui::Button("X", ImVec2(buttonWidth, buttonWidth))) { m_window.close(); }
+    if (ImGui::Button("X", ImVec2(buttonWidth, buttonWidth))) {
+        m_window.close();
+    }
     ImGui::PopStyleColor();
 
     ImGui::End();
 
-    m_window.draw(frameSprite);
+    m_window.draw(m_frameSprite);
 
     ImGui::SFML::Render(m_window);
     m_window.display();
 }
 
-void FrogApp::minimizeWindow(sf::RenderWindow &window)
+void FrogApp::minimizeWindow(sf::RenderWindow& window)
 {
 #if defined(_WIN32)
     HWND hwnd = window.getNativeHandle();
     ShowWindow(hwnd, SW_MINIMIZE);
 #elif defined(__APPLE__)
-    void *nsWindow = window.getNativeHandle();
+    void* nsWindow = window.getNativeHandle();
     objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);
 #elif defined(__linux__)
-    Display *display = XOpenDisplay(nullptr);
-    if (display == nullptr) { return; }
+    Display* display = XOpenDisplay(nullptr);
+    if (display == nullptr) {
+        return;
+    }
     xev.type = ClientMessage;
     xev.xclient.window = win;
     xev.xclient.message_type = XInternAtom(display, "WM_CHANGE_STATE", False);
@@ -185,5 +190,3 @@ void FrogApp::minimizeWindow(sf::RenderWindow &window)
     XFlush(display);
 #endif
 }
-
-bool FrogApp::isRunning() { return m_isRunning; }

@@ -1,23 +1,15 @@
 #include "FrogApp.hpp"
 
-#include <iostream>
-
 int main()
 {
-    FrogApp frogApp;
+    // Init App
+    FrogApp frogApp{};
 
-    bool initialized = frogApp.init();
-
-    if (!initialized) {
-        std::cout << "Failed to initialize FrogApp!\n";
-        return -1;
-    }
-
-    while (frogApp.isRunning()) { 
+    // Run App
+    while (frogApp.getWindow().isOpen()) {
         frogApp.processWindowEvents();
-        forgApp.render();
+        frogApp.render();
     }
 
-    ImGui::SFML::Shutdown();
     return 0;
 }
