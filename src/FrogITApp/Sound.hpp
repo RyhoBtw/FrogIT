@@ -4,4 +4,4 @@ class Sound
 {
     void playSound();
     void stopSound();
-}
+};

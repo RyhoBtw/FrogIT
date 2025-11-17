@@ -1,12 +1,11 @@
 #pragma once
 
-enum class ResourceType
-{
+enum class ResourceType {
     TEXTURE,
     ANIMATION,
     SOUND,
-}
+};
 
 class Resource
 {
-}
+};
