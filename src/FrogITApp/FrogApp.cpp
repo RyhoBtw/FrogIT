@@ -23,10 +23,12 @@
 #endif
 
 #ifdef __linux__
+// Warning: CAUSES NAMING COLLISIONS WITH SFML LIBRARY - TODO: make into classes like FrogApp_implLinux
 #include <X11/X.h>
 #include <X11/Xlib.h>// provides ::Window and XOpenDisplay
 /* fix X11 None collision with sf::Style::None if needed */
 #undef None
+#undef Status
 #endif
 
 #ifdef __APPLE__
