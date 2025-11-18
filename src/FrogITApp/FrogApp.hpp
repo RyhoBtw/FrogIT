@@ -19,7 +19,6 @@ class FrogApp
     void setWindowTopMost(sf::RenderWindow& window);
 
     sf::RenderWindow m_window;
-    sf::RenderWindow m_interactionLayerWindow;
     sf::Clock m_clock;
     sf::Vector2i m_dragOffset = { 0, 0 };
     sf::Sprite m_frameSprite;

@@ -158,10 +158,10 @@ void FrogApp::minimizeWindow(sf::RenderWindow& window)
     HWND hwnd = window.getNativeHandle();
     ShowWindow(hwnd, SW_MINIMIZE);
 #elif defined(__APPLE__)
-    void* nsWindow = window.getNativeHandle();
-    objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);
+    /*void* nsWindow = window.getNativeHandle();
+    objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);*/
 #elif defined(__linux__)
-    Display* display = XOpenDisplay(nullptr);
+    /*Display* display = XOpenDisplay(nullptr);
     if (display == nullptr) {
         return;
     }
@@ -171,7 +171,7 @@ void FrogApp::minimizeWindow(sf::RenderWindow& window)
     xev.xclient.format = 32;
     xev.xclient.data.l[0] = IconicState;
     XSendEvent(display, DefaultRootWindow(display), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-    XFlush(display);
+    XFlush(display);*/
 #endif
 }
 
@@ -191,7 +191,7 @@ void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
 #endif
 
 #ifdef __linux__
-    Display* display = XOpenDisplay(nullptr);
+    /*Display* display = XOpenDisplay(nullptr);
     if (!display) {
         fprintf(stderr, "Failed to open X display\n");
         return;
@@ -205,7 +205,7 @@ void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
     XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
 
     XFlush(display);
-    XCloseDisplay(display);
+    XCloseDisplay(display);*/
 #endif
 }
 
