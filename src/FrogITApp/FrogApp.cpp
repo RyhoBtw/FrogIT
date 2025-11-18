@@ -39,7 +39,7 @@
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
 
-FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, frog{ "logo.png" }
+FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, m_frog{ "big_croak.png" }
 {
     const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     const unsigned int width = m_frameSprite.getTexture().getSize().x;
@@ -48,12 +48,9 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
     // Create blank window, no titlebar (options)
     m_window.create(sf::VideoMode(sf::Vector2u(width, height), desktop.bitsPerPixel), "FrogITSettings", sf::Style::None);
 
-    // Create blank window, no titlebar (InteractionLayer)
-    m_interactionLayerWindow.create(sf::VideoMode(desktop.size, desktop.bitsPerPixel), "InteractionLayer", sf::Style::None);
+    m_window.setIcon(ResourceManager::getImage("logo.png"));
 
     m_window.setFramerateLimit(FRAMERATE_LIMIT);
-
-    m_interactionLayerWindow.setFramerateLimit(FRAMERATE_LIMIT);
 
     if (!ImGui::SFML::Init(m_window)) {
         std::cout << "Unable to initialize ImGui\n";
@@ -64,8 +61,8 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
 
     turnWindowBackgroundInvisible(m_window);
     setWindowTopMost(m_window);
-    setWindowClickthrough(m_interactionLayerWindow);
-    setWindowTopMost(m_interactionLayerWindow);
+
+    initFrogWindow(m_frog, desktop.bitsPerPixel);
 }
 
 FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
@@ -145,11 +142,19 @@ void FrogApp::render()
     ImGui::SFML::Render(m_window);
     m_window.display();
 
-    m_interactionLayerWindow.clear(sf::Color::Transparent);
+    m_frog.getWindow().clear(sf::Color::Transparent);
 
-    m_interactionLayerWindow.draw(frog.getSprite());
+    m_frog.getWindow().draw(m_frog.getSprite());
 
-    m_interactionLayerWindow.display();
+    m_frog.getWindow().display();
+}
+
+void FrogApp::initFrogWindow(Frog& frog, unsigned int bPP)
+{
+    auto& frogWindow = frog.getWindow();
+    frogWindow.create(sf::VideoMode(frog.getSprite().getTexture().getSize(), bPP), "Frog", sf::Style::None);
+    turnWindowBackgroundInvisible(frogWindow);
+    setWindowTopMost(frogWindow);
 }
 
 void FrogApp::minimizeWindow(sf::RenderWindow& window)
@@ -208,8 +213,6 @@ void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
     XCloseDisplay(display);
 #endif
 }
-
-
 
 void FrogApp::setWindowTopMost(sf::RenderWindow& window)
 {
