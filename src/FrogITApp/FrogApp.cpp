@@ -71,6 +71,7 @@ FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
 
 void FrogApp::processWindowEvents()
 {
+    // TODO process frog window events
     while (const std::optional<sf::Event> event = m_window.pollEvent()) {
         ImGui::SFML::ProcessEvent(m_window, *event);
 
@@ -117,7 +118,6 @@ void FrogApp::render()
     ImGui::Begin(
         "UI", &open, static_cast<ImGuiWindowFlags>(static_cast<unsigned int>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)));
 
-
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
     ImGui::SliderFloat("Volume1", &m_vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
     ImGui::SliderFloat("Frequency1", &m_freq, UI_SLIDER_MIN, UI_SLIDER_MAX);
@@ -138,7 +138,7 @@ void FrogApp::render()
     ImGui::PopStyleColor();
 
     ImGui::End();
-
+    
     m_window.draw(m_frameSprite);
 
     ImGui::SFML::Render(m_window);

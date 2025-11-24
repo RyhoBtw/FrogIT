@@ -6,7 +6,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        ref: ${{ github.head_ref }}
+
     - uses: DoozyX/clang-format-lint-action@v0.20
       with:
         source: '.'
@@ -14,6 +18,7 @@ jobs:
         extensions: 'h,cpp,hpp'
         clangFormatVersion: 19
         inplace: True
+
     - uses: EndBug/add-and-commit@v9
       with:
         author_name: Clang Robot
