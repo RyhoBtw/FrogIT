@@ -1,0 +1,18 @@
+# **ADR 0002 — Use SFML for Audio and Dear ImGui for the UI**
+## Context and Problem Statement
+FrogIT needs audio playback, rendering, and UI components. The tools must be lightweight, C++ friendly, and fast to integrate.  
+**Question:** Which libraries best support fast development, good performance, and maintainability?
+## Considered Options
+- SFML + Dear ImGui
+- SDL2 + ImGui
+- Qt (full framework)
+- Custom UI + custom audio backend
+## Decision
+Chosen option: **“SFML + Dear ImGui”**, because this combination minimizes boilerplate, is easy to learn, is lightweight, open source, and fits the project scope.
+## Status
+Accepted
+## Consequences
+- Positive: **Fast prototyping**, minimal complexity
+- Positive: **SFML is easy to use** and beginner friendly
+- Negative: SFML does **not guarantee the lowest possible audio latency**
+- Negative: ImGui is **not a native desktop UI**, it uses an immediate-mode model
