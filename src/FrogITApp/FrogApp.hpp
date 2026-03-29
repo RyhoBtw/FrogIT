@@ -28,5 +28,7 @@ class FrogApp
     float m_vol = 0.0F;
     float m_freq = 0.0F;
 
+    sf::Vector2u m_desktopSize;
+
     Frog m_frog;
 };

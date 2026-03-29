@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <optional>
+#include <vector>
 
 #ifdef _WIN32
 #include <Dwmapi.h>
@@ -23,12 +24,15 @@
 #endif
 
 #ifdef __linux__
-// Warning: CAUSES NAMING COLLISIONS WITH SFML LIBRARY - TODO: make into classes like FrogApp_implLinux
+// Warning: CAUSES NAMING COLLISIONS WITH SFML LIBRARY
 #include <X11/X.h>
-#include <X11/Xlib.h>// provides ::Window and XOpenDisplay
-/* fix X11 None collision with sf::Style::None if needed */
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/shape.h>
 #undef None
 #undef Status
+#undef Bool
 #endif
 
 #ifdef __APPLE__
@@ -40,6 +44,140 @@
 
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
+
+#ifdef __linux__
+// Apply X11 Shape mask so transparent pixels are physically clipped away.
+// When flipped=true, the mask is horizontally mirrored to match a flipped sprite.
+static void applyShapeMask(sf::RenderWindow& window, const sf::Texture& texture, float scale, bool flipped)
+{
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) return;
+
+    ::Window xwindow = window.getNativeHandle();
+
+    sf::Image image = texture.copyToImage();
+    auto imgSize = image.getSize();
+
+    auto scaledW = static_cast<unsigned int>(static_cast<float>(imgSize.x) * scale);
+    auto scaledH = static_cast<unsigned int>(static_cast<float>(imgSize.y) * scale);
+    if (scaledW == 0 || scaledH == 0) { XCloseDisplay(display); return; }
+
+    Pixmap mask = XCreatePixmap(display, xwindow, scaledW, scaledH, 1);
+    GC gc = XCreateGC(display, mask, 0, nullptr);
+
+    XSetForeground(display, gc, 0);
+    XFillRectangle(display, mask, gc, 0, 0, scaledW, scaledH);
+
+    XSetForeground(display, gc, 1);
+    for (unsigned int y = 0; y < scaledH; ++y) {
+        auto texY = std::min(static_cast<unsigned int>(static_cast<float>(y) / scale), imgSize.y - 1);
+        unsigned int runStart = 0;
+        bool inRun = false;
+        for (unsigned int x = 0; x <= scaledW; ++x) {
+            bool opaque = false;
+            if (x < scaledW) {
+                auto texX = std::min(static_cast<unsigned int>(static_cast<float>(x) / scale), imgSize.x - 1);
+                if (flipped) texX = imgSize.x - 1 - texX;
+                opaque = image.getPixel(sf::Vector2u(texX, texY)).a > 64;
+            }
+            if (opaque && !inRun) {
+                runStart = x;
+                inRun = true;
+            } else if (!opaque && inRun) {
+                XFillRectangle(display, mask, gc, static_cast<int>(runStart), static_cast<int>(y), x - runStart, 1);
+                inRun = false;
+            }
+        }
+    }
+
+    XShapeCombineMask(display, xwindow, ShapeBounding, 0, 0, mask, ShapeSet);
+
+    XFreeGC(display, gc);
+    XFreePixmap(display, mask);
+    XFlush(display);
+    XCloseDisplay(display);
+}
+
+// For the settings window: precise frame outline with filled interior.
+// Uses flood-fill from edges to find exterior transparent pixels, then the mask
+// is everything NOT exterior (opaque frame pixels + enclosed interior).
+static void applyFilledShapeMask(sf::RenderWindow& window, const sf::Texture& texture)
+{
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) return;
+
+    ::Window xwindow = window.getNativeHandle();
+
+    sf::Image image = texture.copyToImage();
+    auto imgSize = image.getSize();
+    if (imgSize.x == 0 || imgSize.y == 0) { XCloseDisplay(display); return; }
+
+    auto w = imgSize.x;
+    auto h = imgSize.y;
+
+    // Build boolean grid: true = opaque (part of frame border)
+    std::vector<bool> opaque(static_cast<size_t>(w) * h, false);
+    for (unsigned int y = 0; y < h; ++y)
+        for (unsigned int x = 0; x < w; ++x)
+            opaque[static_cast<size_t>(y) * w + x] = image.getPixel(sf::Vector2u(x, y)).a > 64;
+
+    // Flood-fill from edges to mark exterior transparent pixels
+    std::vector<bool> exterior(static_cast<size_t>(w) * h, false);
+    std::vector<std::pair<unsigned int, unsigned int>> stack;
+    // Seed all transparent edge pixels
+    for (unsigned int x = 0; x < w; ++x) {
+        if (!opaque[x]) stack.emplace_back(x, 0u);
+        if (!opaque[static_cast<size_t>(h - 1) * w + x]) stack.emplace_back(x, h - 1);
+    }
+    for (unsigned int y = 1; y + 1 < h; ++y) {
+        if (!opaque[static_cast<size_t>(y) * w]) stack.emplace_back(0u, y);
+        if (!opaque[static_cast<size_t>(y) * w + w - 1]) stack.emplace_back(w - 1, y);
+    }
+
+    while (!stack.empty()) {
+        auto [sx, sy] = stack.back();
+        stack.pop_back();
+        auto idx = static_cast<size_t>(sy) * w + sx;
+        if (exterior[idx]) continue;
+        exterior[idx] = true;
+        if (sx > 0     && !opaque[idx - 1]  && !exterior[idx - 1])  stack.emplace_back(sx - 1, sy);
+        if (sx + 1 < w && !opaque[idx + 1]  && !exterior[idx + 1])  stack.emplace_back(sx + 1, sy);
+        if (sy > 0     && !opaque[idx - w]  && !exterior[idx - w])  stack.emplace_back(sx, sy - 1);
+        if (sy + 1 < h && !opaque[idx + w]  && !exterior[idx + w])  stack.emplace_back(sx, sy + 1);
+    }
+
+    // Shape mask = NOT exterior (opaque border + interior)
+    Pixmap mask = XCreatePixmap(display, xwindow, w, h, 1);
+    GC gc = XCreateGC(display, mask, 0, nullptr);
+
+    XSetForeground(display, gc, 0);
+    XFillRectangle(display, mask, gc, 0, 0, w, h);
+
+    XSetForeground(display, gc, 1);
+    for (unsigned int y = 0; y < h; ++y) {
+        unsigned int runStart = 0;
+        bool inRun = false;
+        for (unsigned int x = 0; x <= w; ++x) {
+            bool visible = (x < w) && !exterior[static_cast<size_t>(y) * w + x];
+            if (visible && !inRun) {
+                runStart = x;
+                inRun = true;
+            } else if (!visible && inRun) {
+                XFillRectangle(display, mask, gc, static_cast<int>(runStart),
+                               static_cast<int>(y), x - runStart, 1);
+                inRun = false;
+            }
+        }
+    }
+
+    XShapeCombineMask(display, xwindow, ShapeBounding, 0, 0, mask, ShapeSet);
+
+    XFreeGC(display, gc);
+    XFreePixmap(display, mask);
+    XFlush(display);
+    XCloseDisplay(display);
+}
+#endif
 
 FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, m_frog{ "big_croak.png" }
 {
@@ -54,6 +192,8 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
 
     m_window.setFramerateLimit(FRAMERATE_LIMIT);
 
+    m_desktopSize = desktop.size;
+
     if (!ImGui::SFML::Init(m_window)) {
         std::cout << "Unable to initialize ImGui\n";
         std::cout << "Waiting for input to close the application..." << '\n';
@@ -64,6 +204,10 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
     turnWindowBackgroundInvisible(m_window);
     setWindowTopMost(m_window);
 
+#ifdef __linux__
+    applyFilledShapeMask(m_window, m_frameSprite.getTexture());
+#endif
+
     initFrogWindow(m_frog, desktop.bitsPerPixel);
 }
 
@@ -71,7 +215,13 @@ FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
 
 void FrogApp::processWindowEvents()
 {
-    // TODO process frog window events
+    // Process frog window events (drain to prevent "not responding")
+    while (const std::optional<sf::Event> frogEvent = m_frog.getWindow().pollEvent()) {
+        if (frogEvent->is<sf::Event::Closed>()) {
+            m_window.close();
+        }
+    }
+
     while (const std::optional<sf::Event> event = m_window.pollEvent()) {
         ImGui::SFML::ProcessEvent(m_window, *event);
 
@@ -107,7 +257,17 @@ const sf::RenderWindow& FrogApp::getWindow() { return m_window; }
 
 void FrogApp::render()
 {
-    ImGui::SFML::Update(m_window, m_clock.restart());
+    sf::Time dt = m_clock.restart();
+    ImGui::SFML::Update(m_window, dt);
+
+    m_frog.update(dt.asSeconds(), m_desktopSize);
+
+#ifdef __linux__
+    if (m_frog.consumeDirectionChanged()) {
+        applyShapeMask(m_frog.getWindow(), m_frog.getSprite().getTexture(),
+                       m_frog.getScale(), !m_frog.isFacingRight());
+    }
+#endif
 
     m_window.clear(sf::Color::Transparent);
 
@@ -154,9 +314,13 @@ void FrogApp::render()
 void FrogApp::initFrogWindow(Frog& frog, unsigned int bPP)
 {
     auto& frogWindow = frog.getWindow();
-    frogWindow.create(sf::VideoMode(frog.getSprite().getTexture().getSize(), bPP), "Frog", sf::Style::None);
+    frogWindow.create(sf::VideoMode(frog.getScaledSize(), bPP), "Frog", sf::Style::None);
     turnWindowBackgroundInvisible(frogWindow);
     setWindowTopMost(frogWindow);
+
+#ifdef __linux__
+    applyShapeMask(frogWindow, frog.getSprite().getTexture(), frog.getScale(), false);
+#endif
 }
 
 void FrogApp::minimizeWindow(sf::RenderWindow& window)
@@ -168,24 +332,18 @@ void FrogApp::minimizeWindow(sf::RenderWindow& window)
     /*void* nsWindow = window.getNativeHandle();
     objc_msgSend(nsWindow, sel_getUid("miniaturize:"), nullptr);*/
 #elif defined(__linux__)
-    /*Display* display = XOpenDisplay(nullptr);
+    Display* display = XOpenDisplay(nullptr);
     if (display == nullptr) {
         return;
     }
-    xev.type = ClientMessage;
-    xev.xclient.window = win;
-    xev.xclient.message_type = XInternAtom(display, "WM_CHANGE_STATE", False);
-    xev.xclient.format = 32;
-    xev.xclient.data.l[0] = IconicState;
-    XSendEvent(display, DefaultRootWindow(display), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-    XFlush(display);*/
+    XIconifyWindow(display, window.getNativeHandle(), DefaultScreen(display));
+    XFlush(display);
+    XCloseDisplay(display);
 #endif
 }
 
 void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
 {
-    // Turn window invisible
-    // TODO: Handle Linux invisible window specifics
 #ifdef _WIN32
     MARGINS margins;
     margins.cxLeftWidth = -1;
@@ -198,21 +356,23 @@ void FrogApp::turnWindowBackgroundInvisible(sf::RenderWindow& window)
 #endif
 
 #ifdef __linux__
-    /*Display* display = XOpenDisplay(nullptr);
+    Display* display = XOpenDisplay(nullptr);
     if (!display) {
-        fprintf(stderr, "Failed to open X display\n");
         return;
     }
 
-    ::Window xwindow = window.getSystemHandle();
+    ::Window xwindow = window.getNativeHandle();
 
-    // Set the window opacity (0xFFFFFFFF = opaque, 0x00000000 = fully transparent)
-    unsigned long opacity = 0;// 0 = fully transparent
-    Atom property = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
-    XChangeProperty(display, xwindow, property, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
+    // Skip taskbar and pager so the overlay windows don't clutter the taskbar
+    Atom wmState = XInternAtom(display, "_NET_WM_STATE", False);
+    Atom skipTaskbar = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", False);
+    Atom skipPager = XInternAtom(display, "_NET_WM_STATE_SKIP_PAGER", False);
+    Atom atoms[2] = { skipTaskbar, skipPager };
+    XChangeProperty(display, xwindow, wmState, XA_ATOM, 32, PropModeAppend,
+        reinterpret_cast<unsigned char*>(atoms), 2);
 
     XFlush(display);
-    XCloseDisplay(display);*/
+    XCloseDisplay(display);
 #endif
 }
 
@@ -226,5 +386,29 @@ void FrogApp::setWindowTopMost(sf::RenderWindow& window)
 #endif
 
 #ifdef __linux__
+    Display* display = XOpenDisplay(nullptr);
+    if (!display) {
+        return;
+    }
+
+    ::Window xwindow = window.getNativeHandle();
+
+    Atom wmState = XInternAtom(display, "_NET_WM_STATE", False);
+    Atom wmStateAbove = XInternAtom(display, "_NET_WM_STATE_ABOVE", False);
+
+    XEvent xev = {};
+    xev.type = ClientMessage;
+    xev.xclient.window = xwindow;
+    xev.xclient.message_type = wmState;
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = 1;  // _NET_WM_STATE_ADD
+    xev.xclient.data.l[1] = static_cast<long>(wmStateAbove);
+    xev.xclient.data.l[2] = 0;
+
+    XSendEvent(display, DefaultRootWindow(display), False,
+        SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+    XFlush(display);
+    XCloseDisplay(display);
 #endif
 }

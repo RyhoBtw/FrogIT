@@ -10,3 +10,4 @@ constexpr float UI_BUTTON_WIDTH_DEFAULT = 20.0F;
 constexpr float UI_SLIDER_MIN = 0.0F;
 constexpr float UI_SLIDER_MAX = 10.0F;
 constexpr float UI_DISTANCE_MULT_BUTTON = 2.5F;
+constexpr float FROG_TARGET_HEIGHT = 150.0F;

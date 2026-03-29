@@ -24,6 +24,10 @@ target_link_libraries(
 if(APPLE)
   target_link_libraries(FrogITApp PRIVATE "-framework Cocoa")
 endif()
+
+if(UNIX AND NOT APPLE)
+  target_link_libraries(FrogITApp PRIVATE X11 Xext)
+endif()
 					
 target_include_directories(FrogITApp PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
 
