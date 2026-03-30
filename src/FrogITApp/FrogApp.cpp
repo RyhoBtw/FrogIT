@@ -13,6 +13,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <algorithm>
 #include <iostream>
 #include <optional>
 #include <vector>
@@ -305,7 +306,8 @@ void FrogApp::render()
     ImGui::Separator();
     ImGui::Spacing();
 
-    if (ImGui::SliderInt("Frogs", &m_frogCount, 1, 10)) {
+    if (ImGui::InputInt("Frogs", &m_frogCount)) {
+        m_frogCount = std::clamp(m_frogCount, 1, 200);
         updateFrogCount(m_frogCount);
     }
 
