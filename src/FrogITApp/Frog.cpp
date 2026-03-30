@@ -68,6 +68,16 @@ Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     m_sprite.setScale({ m_scale, m_scale });
 }
 
+void Frog::randomizePosition(sf::Vector2u desktopSize)
+{
+    auto scaled = getScaledSize();
+    std::uniform_real_distribution<float> distX(0.f, static_cast<float>(desktopSize.x - scaled.x));
+    std::uniform_real_distribution<float> distY(0.f, static_cast<float>(desktopSize.y - scaled.y));
+    m_position = { distX(m_rng), distY(m_rng) };
+    m_hopStart = m_position;
+    m_hopEnd = m_position;
+}
+
 void Frog::pickNextHop(sf::Vector2u desktopSize)
 {
     auto scaled = getScaledSize();

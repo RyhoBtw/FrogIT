@@ -413,6 +413,7 @@ void FrogApp::updateFrogCount(int newCount)
     if (newCount > current) {
         for (int i = current; i < newCount; ++i) {
             auto frog = std::make_unique<Frog>("big_croak.png", "big_closed.png");
+            frog->randomizePosition(m_desktopSize);
             initFrogWindow(*frog, m_bitsPerPixel);
             m_frogs.push_back(std::move(frog));
         }

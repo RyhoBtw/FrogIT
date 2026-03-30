@@ -9,6 +9,7 @@ class Frog
 {
   public:
     Frog(const std::string& textureOpen, const std::string& textureClosed);
+    void randomizePosition(sf::Vector2u desktopSize);
     void update(float deltaTime, sf::Vector2u desktopSize);
     void handleClick();
     sf::Sprite& getSprite();
