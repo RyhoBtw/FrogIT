@@ -13,6 +13,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <algorithm>
 #include <iostream>
 #include <optional>
 #include <vector>
@@ -179,7 +180,7 @@ static void applyFilledShapeMask(sf::RenderWindow& window, const sf::Texture& te
 }
 #endif
 
-FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, m_frog{ "big_croak.png" }
+FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }
 {
     const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     const unsigned int width = m_frameSprite.getTexture().getSize().x;
@@ -193,6 +194,7 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
     m_window.setFramerateLimit(FRAMERATE_LIMIT);
 
     m_desktopSize = desktop.size;
+    m_bitsPerPixel = desktop.bitsPerPixel;
 
     if (!ImGui::SFML::Init(m_window)) {
         std::cout << "Unable to initialize ImGui\n";
@@ -202,23 +204,37 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }, 
     }
 
     turnWindowBackgroundInvisible(m_window);
+#ifndef __linux__
     setWindowTopMost(m_window);
+#endif
 
 #ifdef __linux__
     applyFilledShapeMask(m_window, m_frameSprite.getTexture());
 #endif
 
-    initFrogWindow(m_frog, desktop.bitsPerPixel);
+    // Spawn initial frog
+    updateFrogCount(m_frogCount);
+
+    if (!m_font.openFromFile("assets/fonts/tuffy.ttf")) {
+        std::cout << "Warning: Could not load font\n";
+    }
 }
 
 FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
 
 void FrogApp::processWindowEvents()
 {
-    // Process frog window events (drain to prevent "not responding")
-    while (const std::optional<sf::Event> frogEvent = m_frog.getWindow().pollEvent()) {
-        if (frogEvent->is<sf::Event::Closed>()) {
-            m_window.close();
+    // Process frog window events
+    for (auto& frog : m_frogs) {
+        while (const std::optional<sf::Event> frogEvent = frog->getWindow().pollEvent()) {
+            if (frogEvent->is<sf::Event::Closed>()) {
+                m_window.close();
+            }
+            if (const auto* pressed = frogEvent->getIf<sf::Event::MouseButtonPressed>()) {
+                if (pressed->button == sf::Mouse::Button::Left) {
+                    frog->handleClick();
+                }
+            }
         }
     }
 
@@ -229,11 +245,13 @@ void FrogApp::processWindowEvents()
             m_window.close();
         }
 
-        // --- Start drag ---
+        // --- Start drag (only if ImGui doesn't want the mouse, e.g. not clicking a button) ---
         if (const auto* pressedEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
-            if (pressedEvent->button == sf::Mouse::Button::Left && sf::Mouse::getPosition(m_window).y < FRAME_TOP_BORDER_Y) {
+            if (pressedEvent->button == sf::Mouse::Button::Left
+                && sf::Mouse::getPosition(m_window).y < FRAME_TOP_BORDER_Y
+                && !ImGui::GetIO().WantCaptureMouse) {
                 m_isDragging = true;
-                m_dragOffset = sf::Mouse::getPosition(m_window);// position inside window
+                m_dragOffset = sf::Mouse::getPosition(m_window);
             }
         }
 
@@ -260,14 +278,16 @@ void FrogApp::render()
     sf::Time dt = m_clock.restart();
     ImGui::SFML::Update(m_window, dt);
 
-    m_frog.update(dt.asSeconds(), m_desktopSize);
+    for (auto& frog : m_frogs) {
+        frog->update(dt.asSeconds(), m_desktopSize);
 
 #ifdef __linux__
-    if (m_frog.consumeDirectionChanged()) {
-        applyShapeMask(m_frog.getWindow(), m_frog.getSprite().getTexture(),
-                       m_frog.getScale(), !m_frog.isFacingRight());
-    }
+        if (frog->consumeDirectionChanged()) {
+            applyShapeMask(frog->getWindow(), frog->getSprite().getTexture(),
+                           frog->getScale(), !frog->isFacingRight());
+        }
 #endif
+    }
 
     m_window.clear(sf::Color::Transparent);
 
@@ -279,8 +299,17 @@ void FrogApp::render()
         "UI", &open, static_cast<ImGuiWindowFlags>(static_cast<unsigned int>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)));
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
-    ImGui::SliderFloat("Volume1", &m_vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
-    ImGui::SliderFloat("Frequency1", &m_freq, UI_SLIDER_MIN, UI_SLIDER_MAX);
+    ImGui::SliderFloat("Volume", &m_vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
+    ImGui::SliderFloat("Frequency", &m_freq, UI_SLIDER_MIN, UI_SLIDER_MAX);
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    if (ImGui::InputInt("Frogs", &m_frogCount)) {
+        m_frogCount = std::clamp(m_frogCount, 1, 200);
+        updateFrogCount(m_frogCount);
+    }
 
     const float windowWidth = ImGui::GetWindowSize().x;
     const float buttonWidth = UI_BUTTON_WIDTH_DEFAULT;
@@ -304,11 +333,66 @@ void FrogApp::render()
     ImGui::SFML::Render(m_window);
     m_window.display();
 
-    m_frog.getWindow().clear(sf::Color::Transparent);
+    for (auto& frog : m_frogs) {
+        frog->getWindow().clear(sf::Color::Transparent);
+        frog->getWindow().draw(frog->getSprite());
+        frog->getWindow().display();
 
-    m_frog.getWindow().draw(m_frog.getSprite());
+        renderSpeechBubble(*frog);
+    }
+}
 
-    m_frog.getWindow().display();
+void FrogApp::renderSpeechBubble(Frog& frog)
+{
+    if (frog.hasSpeechBubble()) {
+        // Only one speech window at a time — take over if a new frog speaks
+        if (&frog != m_activeSpeaker) {
+            if (m_speechWindowOpen) {
+                m_speechWindow.close();
+                m_speechWindowOpen = false;
+            }
+            m_activeSpeaker = &frog;
+        }
+
+        if (!m_speechWindowOpen) {
+            sf::Text text(m_font, frog.getSpeechText(), 14);
+            auto bounds = text.getLocalBounds();
+            unsigned int bubbleW = static_cast<unsigned int>(bounds.size.x + 24.f);
+            unsigned int bubbleH = static_cast<unsigned int>(bounds.size.y + 20.f);
+
+            m_speechWindow.create(sf::VideoMode(sf::Vector2u(bubbleW, bubbleH), 32), "Speech", sf::Style::None);
+            turnWindowBackgroundInvisible(m_speechWindow);
+            setWindowTopMost(m_speechWindow);
+            m_speechWindowOpen = true;
+        }
+
+        auto bubblePos = frog.getSpeechBubblePosition();
+        auto speechSize = m_speechWindow.getSize();
+        m_speechWindow.setPosition(sf::Vector2i(
+            static_cast<int>(bubblePos.x - static_cast<float>(speechSize.x) / 2.f),
+            static_cast<int>(bubblePos.y - static_cast<float>(speechSize.y))));
+
+        while (m_speechWindow.pollEvent()) {}
+
+        m_speechWindow.clear(sf::Color(60, 60, 60, 230));
+
+        sf::RectangleShape bg(sf::Vector2f(static_cast<float>(speechSize.x), static_cast<float>(speechSize.y)));
+        bg.setFillColor(sf::Color(245, 245, 220));
+        bg.setOutlineColor(sf::Color(80, 130, 80));
+        bg.setOutlineThickness(2.f);
+        m_speechWindow.draw(bg);
+
+        sf::Text text(m_font, frog.getSpeechText(), 14);
+        text.setFillColor(sf::Color(40, 40, 40));
+        text.setPosition({ 12.f, 6.f });
+        m_speechWindow.draw(text);
+
+        m_speechWindow.display();
+    } else if (m_speechWindowOpen && m_activeSpeaker == &frog) {
+        m_speechWindow.close();
+        m_speechWindowOpen = false;
+        m_activeSpeaker = nullptr;
+    }
 }
 
 void FrogApp::initFrogWindow(Frog& frog, unsigned int bPP)
@@ -321,6 +405,32 @@ void FrogApp::initFrogWindow(Frog& frog, unsigned int bPP)
 #ifdef __linux__
     applyShapeMask(frogWindow, frog.getSprite().getTexture(), frog.getScale(), false);
 #endif
+}
+
+void FrogApp::updateFrogCount(int newCount)
+{
+    int current = static_cast<int>(m_frogs.size());
+    if (newCount > current) {
+        for (int i = current; i < newCount; ++i) {
+            auto frog = std::make_unique<Frog>("big_croak.png", "big_closed.png");
+            frog->randomizePosition(m_desktopSize);
+            initFrogWindow(*frog, m_bitsPerPixel);
+            m_frogs.push_back(std::move(frog));
+        }
+    } else if (newCount < current) {
+        // Close speech bubble if its speaker is being removed
+        for (int i = newCount; i < current; ++i) {
+            if (m_activeSpeaker == m_frogs[static_cast<size_t>(i)].get()) {
+                if (m_speechWindowOpen) {
+                    m_speechWindow.close();
+                    m_speechWindowOpen = false;
+                }
+                m_activeSpeaker = nullptr;
+            }
+            m_frogs[static_cast<size_t>(i)]->getWindow().close();
+        }
+        m_frogs.resize(static_cast<size_t>(newCount));
+    }
 }
 
 void FrogApp::minimizeWindow(sf::RenderWindow& window)
