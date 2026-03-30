@@ -18,6 +18,7 @@ class FrogApp
     void minimizeWindow(sf::RenderWindow& window);
     void turnWindowBackgroundInvisible(sf::RenderWindow& window);
     void setWindowTopMost(sf::RenderWindow& window);
+    void renderSpeechBubble();
 
     sf::RenderWindow m_window;
     sf::Image m_iconImage;
@@ -31,4 +32,9 @@ class FrogApp
     sf::Vector2u m_desktopSize;
 
     Frog m_frog;
+
+    // Speech bubble
+    sf::RenderWindow m_speechWindow;
+    sf::Font m_font;
+    bool m_speechWindowOpen = false;
 };
