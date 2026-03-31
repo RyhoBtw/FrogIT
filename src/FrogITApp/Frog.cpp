@@ -177,8 +177,13 @@ void Frog::handleClick()
 {
     auto now = std::chrono::system_clock::now();
     auto timeT = std::chrono::system_clock::to_time_t(now);
-    auto* localTime = std::localtime(&timeT);
-    int hour = localTime->tm_hour;
+    std::tm timeBuf{};
+#ifdef _WIN32
+    localtime_s(&timeBuf, &timeT);
+#else
+    localtime_r(&timeT, &timeBuf);
+#endif
+    int hour = timeBuf.tm_hour;
 
     const auto& phrases = getPhrasesForHour(hour);
     std::uniform_int_distribution<size_t> dist(0, phrases.size() - 1);

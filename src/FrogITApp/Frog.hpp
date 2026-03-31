@@ -29,11 +29,15 @@ class Frog
 
     sf::RenderWindow m_window;
     sf::Sprite m_sprite;
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
     const sf::Texture& m_texOpen;
     const sf::Texture& m_texClosed;
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
+#endif
     float m_scale = 1.f;
 
     sf::Vector2f m_position{ 200.f, 200.f };
