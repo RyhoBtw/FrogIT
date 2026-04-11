@@ -23,15 +23,10 @@ contributors. See <https://arc42.org>.
 
 ## Stakeholders {#_stakeholders}
 
-+-------------+---------------------------+---------------------------+
-| Role/Name   | Contact                   | Expectations              |
-+=============+===========================+===========================+
-| *           | *\<Contact-1\>*           | *\<Expectation-1\>*       |
-| \<Role-1\>* |                           |                           |
-+-------------+---------------------------+---------------------------+
-| *           | *\<Contact-2\>*           | *\<Expectation-2\>*       |
-| \<Role-2\>* |                           |                           |
-+-------------+---------------------------+---------------------------+
+| Role/Name | Contact | Expectations |
+|---|---|---|
+| *\<Role-1\>* | *\<Contact-1\>* | *\<Expectation-1\>* |
+| *\<Role-2\>* | *\<Contact-2\>* | *\<Expectation-2\>* |
 
 # Architecture Constraints {#section-architecture-constraints}
 
@@ -95,7 +90,7 @@ Important Interfaces
 
 ### \<Name interface 1\> {#_name_interface_1}
 
-...​
+...
 
 ### \<Name interface m\> {#_name_interface_m}
 
@@ -109,7 +104,7 @@ Important Interfaces
 
 *\<white box template\>*
 
-...​
+...
 
 ### White Box *\<building block m\>* {#_white_box_building_block_m}
 
@@ -133,14 +128,12 @@ Important Interfaces
 
 ## \<Runtime Scenario 1\> {#_runtime_scenario_1}
 
--   *\<insert runtime diagram or textual description of the scenario\>*
-
--   *\<insert description of the notable aspects of the interactions
-    between the building block instances depicted in this diagram.\>*
+- *\<insert runtime diagram or textual description of the scenario\>*
+- *\<insert description of the notable aspects of the interactions between the building block instances depicted in this diagram.\>*
 
 ## \<Runtime Scenario 2\> {#_runtime_scenario_2}
 
-## ...​
+## ...
 
 ## \<Runtime Scenario n\> {#_runtime_scenario_n}
 
@@ -172,7 +165,7 @@ Mapping of Building Blocks to Infrastructure
 
 *\<diagram + explanation\>*
 
-...​
+...
 
 ### *\<Infrastructure Element n\>* {#_infrastructure_element_n}
 
@@ -188,7 +181,7 @@ Mapping of Building Blocks to Infrastructure
 
 *\<explanation\>*
 
-...​
+...
 
 ## *\<Concept n\>* {#_concept_n}
 
@@ -206,10 +199,7 @@ Mapping of Building Blocks to Infrastructure
 
 # Glossary {#section-glossary}
 
-+----------------------+-----------------------------------------------+
-| Term                 | Definition                                    |
-+======================+===============================================+
-| *\<Term-1\>*         | *\<definition-1\>*                            |
-+----------------------+-----------------------------------------------+
-| *\<Term-2\>*         | *\<definition-2\>*                            |
-+----------------------+-----------------------------------------------+
+| Term | Definition |
+|---|---|
+| *\<Term-1\>* | *\<definition-1\>* |
+| *\<Term-2\>* | *\<definition-2\>* |
