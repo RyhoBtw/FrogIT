@@ -1,3 +1,5 @@
+## Overview Quality Tree
+![quality-tree](quality_tree.png)  
 ## Quality Tree (top-level qualities)
 - Usability
   - Q1: Intuitive control of mixer and presets
