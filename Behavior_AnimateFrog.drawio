@@ -1,0 +1,95 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0" version="29.1.1">
+  <diagram name="Seite-1" id="V74KLcNLp9zlezCn-vHK">
+    <mxGraphModel dx="676" dy="868" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-1" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="DfdTRCv5pM4UkGZTn52h-8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="279" y="475" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-22" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.3483" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-2" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="DfdTRCv5pM4UkGZTn52h-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="224" y="500" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-23" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.3231" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-4" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-18">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="169" y="475" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-5" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="69" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-6" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-7" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-8" parent="1" style="html=1;whiteSpace=wrap;" value="Choosing random positions on the botton of the desktop" vertex="1">
+          <mxGeometry height="70" width="130" x="389" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-9" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-10" parent="1" style="html=1;whiteSpace=wrap;" value="Visualising frogs there" vertex="1">
+          <mxGeometry height="60" width="120" x="393" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-11" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="DfdTRCv5pM4UkGZTn52h-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="669" y="550" />
+              <mxPoint x="669" y="550" />
+            </Array>
+            <mxPoint x="634" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-12" parent="1" style="html=1;whiteSpace=wrap;" value="Animate random movement (jumping)" vertex="1">
+          <mxGeometry height="60" width="120" x="609" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-13" parent="1" style="html=1;whiteSpace=wrap;" value="Interaction with application only on the current position of the frogs" vertex="1">
+          <mxGeometry height="70" width="160" x="599" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-14" parent="1" style="html=1;whiteSpace=wrap;" value="Playing frog sounds" vertex="1">
+          <mxGeometry height="50" width="110" x="175" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-15" parent="1" style="html=1;whiteSpace=wrap;" value="Interaction with other applications on the destkop is possible" vertex="1">
+          <mxGeometry height="60" width="130" x="599" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-16" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.625;entryY=1.007;entryDx=0;entryDy=0;entryPerimeter=0;" target="DfdTRCv5pM4UkGZTn52h-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-18" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Application opened?" vertex="1">
+          <mxGeometry height="80" width="140" x="160" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-20" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-18" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-5" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="400" />
+              <mxPoint x="84" y="400" />
+            </Array>
+            <mxPoint x="220" y="430" as="sourcePoint" />
+            <mxPoint x="270" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-21" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.1037" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

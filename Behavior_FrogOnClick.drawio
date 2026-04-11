@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0" version="29.1.1">
+  <diagram name="Seite-1" id="V74KLcNLp9zlezCn-vHK">
+    <mxGraphModel dx="676" dy="868" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-24" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="189" y="365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-25" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="109" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-26" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="DfdTRCv5pM4UkGZTn52h-34">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="244" y="390" as="sourcePoint" />
+            <mxPoint x="244" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-37" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-26" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="0.0333" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-28" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="DfdTRCv5pM4UkGZTn52h-30" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="299" y="365" as="sourcePoint" />
+            <mxPoint x="409" y="365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-36" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.1692" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-29" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-30" parent="1" style="html=1;whiteSpace=wrap;" value="Create speechbubble above its head" vertex="1">
+          <mxGeometry height="50" width="110" x="379" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-31" parent="1" style="html=1;whiteSpace=wrap;" value="Choose random text (depending on time)" vertex="1">
+          <mxGeometry height="50" width="110" x="609" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-32" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-31">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="599" y="475" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-33" parent="1" style="html=1;whiteSpace=wrap;" value="Check local time&amp;nbsp;" vertex="1">
+          <mxGeometry height="50" width="110" x="379" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-34" parent="1" style="html=1;whiteSpace=wrap;" value="Play a croak sound" vertex="1">
+          <mxGeometry height="50" width="110" x="189" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-35" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Clicked on a frog?" vertex="1">
+          <mxGeometry height="80" width="134" x="180" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-38" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-35" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-25" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="247" y="290" />
+              <mxPoint x="124" y="290" />
+            </Array>
+            <mxPoint x="230" y="310" as="sourcePoint" />
+            <mxPoint x="280" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-39" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-38" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.1193" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
