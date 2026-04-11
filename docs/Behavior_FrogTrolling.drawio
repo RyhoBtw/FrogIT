@@ -1,97 +1,121 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="28.2.8">
-  <diagram name="Seite-1" id="9rxZMv8Mnba7JgW3MB76">
-    <mxGraphModel dx="1869" dy="527" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0" version="29.1.1">
+  <diagram name="Seite-1" id="V74KLcNLp9zlezCn-vHK">
+    <mxGraphModel dx="1623" dy="835" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="coI7dVelv7amHDnmwIpa-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="coI7dVelv7amHDnmwIpa-1" target="coI7dVelv7amHDnmwIpa-8" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-1" value="Open Application&amp;nbsp;" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="-70" y="390" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="coI7dVelv7amHDnmwIpa-4" target="coI7dVelv7amHDnmwIpa-1" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-4" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" parent="1" vertex="1">
-          <mxGeometry x="-140" y="400" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="coI7dVelv7amHDnmwIpa-8" target="coI7dVelv7amHDnmwIpa-16" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="coI7dVelv7amHDnmwIpa-8">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-40" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-67" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="DfdTRCv5pM4UkGZTn52h-46">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="155" y="490" as="targetPoint" />
+            <mxPoint x="250" y="485" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-8" value="Animate frogs" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="90" y="380" width="130" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="coI7dVelv7amHDnmwIpa-16" target="coI7dVelv7amHDnmwIpa-26">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="640" y="130" as="targetPoint" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-70" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-40" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.2571" y="-2" as="geometry">
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-16" value="Set a randomized timer" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="294" y="380" width="160" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="coI7dVelv7amHDnmwIpa-26" target="D1l2B--wdHFb3AU0LAzI-6">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="coI7dVelv7amHDnmwIpa-26" value="Consider closesed frog to curser" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="550" y="385" width="130" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-3" target="D1l2B--wdHFb3AU0LAzI-5">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-42" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-67">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="290" y="90" as="targetPoint" />
+            <mxPoint x="140" y="485" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-3" value="Animate tongue" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="380" y="200" width="120" height="60" as="geometry" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-43" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="70" y="470" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-5" target="coI7dVelv7amHDnmwIpa-16">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-44" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-48">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-5" target="D1l2B--wdHFb3AU0LAzI-12">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-5" value="With tongue attached move curser to the frog" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="190" y="200" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-6" target="D1l2B--wdHFb3AU0LAzI-3">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-6" value="Block user from moving the curser" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="555" y="200" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-12" target="D1l2B--wdHFb3AU0LAzI-14">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-12" value="Move curser to a somewhere random on the desktop&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="20" y="200" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-14" value="End the blocking of the curser" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-140" y="200" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-16" target="D1l2B--wdHFb3AU0LAzI-22">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-45" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="310" y="630" as="targetPoint" />
+            <mxPoint x="365" y="560" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-16" value="On click set counter minus on" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="95" y="600" width="120" height="60" as="geometry" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-46" parent="1" style="html=1;whiteSpace=wrap;" value="Animate frogs" vertex="1">
+          <mxGeometry height="70" width="130" x="300" y="450" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-18" target="D1l2B--wdHFb3AU0LAzI-16">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-47" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="DfdTRCv5pM4UkGZTn52h-50">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-48" parent="1" style="html=1;whiteSpace=wrap;" value="Set a randomized timer" vertex="1">
+          <mxGeometry height="70" width="160" x="504" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-49" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-57">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-18" value="Set random counter" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="95" y="490" width="120" height="60" as="geometry" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-50" parent="1" style="html=1;whiteSpace=wrap;" value="Consider closesed frog to curser" vertex="1">
+          <mxGeometry height="60" width="130" x="760" y="455" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="D1l2B--wdHFb3AU0LAzI-22" target="D1l2B--wdHFb3AU0LAzI-18">
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-51" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="DfdTRCv5pM4UkGZTn52h-55">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-52" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Animate tongue" vertex="1">
+          <mxGeometry height="60" width="120" x="590" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-53" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-48">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="D1l2B--wdHFb3AU0LAzI-22" value="When counter is 0, last clicked frog explodes in sparkles" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="284" y="490" width="170" height="60" as="geometry" />
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-54" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-55" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="With tongue attached move curser to the frog" vertex="1">
+          <mxGeometry height="60" width="120" x="400" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-56" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-57" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Block user from moving the curser" vertex="1">
+          <mxGeometry height="60" width="120" x="765" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-58" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-59" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Move curser to a somewhere random on the desktop&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="230" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-60" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="End the blocking of the curser" vertex="1">
+          <mxGeometry height="60" width="120" x="70" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-61" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="DfdTRCv5pM4UkGZTn52h-66">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-62" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="On click set counter minus on" vertex="1">
+          <mxGeometry height="60" width="120" x="305" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-63" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-62">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-64" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Set random counter" vertex="1">
+          <mxGeometry height="60" width="120" x="305" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-65" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="When counter is 0, last clicked frog explodes in sparkles" vertex="1">
+          <mxGeometry height="60" width="170" x="494" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-67" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Application opened?" vertex="1">
+          <mxGeometry height="80" width="125" x="140" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-68" edge="1" parent="1" source="DfdTRCv5pM4UkGZTn52h-67" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DfdTRCv5pM4UkGZTn52h-43" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="203" y="410" />
+              <mxPoint x="85" y="410" />
+            </Array>
+            <mxPoint x="190" y="420" as="sourcePoint" />
+            <mxPoint x="240" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DfdTRCv5pM4UkGZTn52h-69" connectable="0" parent="DfdTRCv5pM4UkGZTn52h-68" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.061" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

@@ -38,7 +38,7 @@ It does **not** include:
 
 - [SFML Documentation](https://www.sfml-dev.org/documentation/3.0.2)
 - [Dear ImGui GitHub Repository](https://github.com/ocornut/imgui)
-- Internal project documentation in [**YouTrack**](https://youtrack.fsn1.mo-ri.tz/dashboard) and https://github.com/RyhoBtw/FrogIT/tree/main/docs
+- Internal project documentation in [**Github Projects**](https://github.com/users/RyhoBtw/projects/2) and https://github.com/RyhoBtw/FrogIT/tree/main/docs
 - Team Blog: [**Team Blog**](https://github.com/RyhoBtw/FrogIT/discussions)
 
 ### 2. Functional Requirements
@@ -68,6 +68,12 @@ A simple interface with sliders for each sound.
 **UML Behavior (Sequence):**  
 ![Sequence1](Sequence_Sounds.png)
 
+**Vorbedingungen:** 
+The application must be started and the settings UI window must not be minimized in order for the user to select soundscapes and modify them.
+
+**Nachbedingungen:** 
+The soundscape is customized to the user's liking.
+
 **Estimated Effort:** Medium
 
 #### 2.3 Feature 2 – Animated Frog Visualization
@@ -83,6 +89,14 @@ A visual overlay showing animated frogs jumping around the desktop.
 
 **UML Behavior (Activity Flow):**  
 ![Behavior1](Behavior_AnimateFrog.png)
+
+**Vorbedingungen:** 
+The application must be started to have at least one frog animated.
+
+**Nachbedingungen:** 
+The frog is animated with different jumping animations, moving across the screen and the user can click and use applications as usual between these frogs.
+
+**Estimated Effort:** Medium/High
 
 #### 2.4 Feature 3 - Interactive Frogs
 
@@ -100,7 +114,13 @@ A visual overlay showing animated frogs jumping around the desktop.
 **UML Behavior (Sequence):**  
 ![Sequence1](Sequence_Text.png)
 
-**Estimated Effort:** Low
+**Vorbedingungen:** 
+The application must be started and the user must click a frog sprite.
+
+**Nachbedingungen:** 
+The frog displays a speech bubble and his mouth opens, the displayed mocking phrase is local-time specific.
+
+**Estimated Effort:** Medium
 
 #### 2.5 Feature 4 - Frog Trolling
 
@@ -114,6 +134,12 @@ A visual overlay showing animated frogs jumping around the desktop.
 **UML Behavior (Activity Flow):**  
 ![Behavior2](Behavior_FrogOnClick.png)
 
+**Vorbedingungen:** 
+The application must be started and the user must wait for frogs to act.
+
+**Nachbedingungen:** 
+A frog catches the mouse cursor with its tongue sprite and drags it towards them, temporarily hindering the users ability to operate the computer.
+
 **Estimated Effort:** High
 
 #### 2.6 Feature 5 - Soundscape Presets
@@ -126,6 +152,12 @@ A visual overlay showing animated frogs jumping around the desktop.
 **UI Mockup (concept):**  
 
 **UML Behavior (Activity Flow):**  
+
+**Vorbedingungen:** 
+The application must be started and the settings UI window must not be minimized in order for the user to load and save soundscapes.
+
+**Nachbedingungen:** 
+Soundscapes with adjusted sound settings can be saved and loaded as json files.
 
 **Estimated Effort:** Low
 
