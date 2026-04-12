@@ -1,7 +1,3 @@
----
-date: July 2025
-title: "![arc42](arc42-logo.png) Template"
----
 
 # 
 
@@ -15,20 +11,64 @@ Template Version 9.0-EN. (based upon AsciiDoc version), July 2025
 Created, maintained and © by Dr. Peter Hruschka, Dr. Gernot Starke and
 contributors. See <https://arc42.org>.
 
-# Introduction and Goals {#section-introduction-and-goals}
+# 1 Introduction and Goals {#section-introduction-and-goals}
 
-## Requirements Overview {#_requirements_overview}
+## 1.1 Requirements Overview {#_requirements_overview}
+FrogIT is a desktop application that allows users to create custom relaxing soundscapes by mixing ambient sounds such as frogs and jungle noises.
+Additionally, the system provides visual feedback through animated frogs to enhance the relaxation experience.
+**Key features**:
+- Create and mix soundscapes
+- Adjust sound parameters (e.g. volume)
+- Animated frog visualization
+- Preset saving and loading
 
-## Quality Goals {#_quality_goals}
+## 1.2 Quality Goals {#_quality_goals}
+Based on the quality tree, the most imporant quality goals are:
+1. **Performance (High Priority)**
+	- Low-latency, real-time audio playback without interruptions
+2. **Maintainability / Extensibility (High Priority)**
+	- Easy to extend with new sounds, animations and UI components
+3. **Usability (Medium Priority)**
+	- Intuitive control of the sound mixer
+	- Non-intrusive visual feedback during usage
+4. **Reliability (Medium Priority)**
+	- Robust handling of missing or corrupted resources
+5. **Security / Privacy (Low Priority)**
+	- Local-only storage of user data without external communication
 
-## Stakeholders {#_stakeholders}
+## 1.3 Stakeholders {#_stakeholders}
 
-| Role/Name | Contact | Expectations |
-|---|---|---|
-| *\<Role-1\>* | *\<Contact-1\>* | *\<Expectation-1\>* |
-| *\<Role-2\>* | *\<Contact-2\>* | *\<Expectation-2\>* |
+| Role/Name              | Contact | Expectations                                                         |
+| ---------------------- | ------- | -------------------------------------------------------------------- |
+| User                   | -       | Easy-to-use application for relaxation with smooth audio and visuals |
+| Developers (Team)      | -       | Maintainable, modular and extensible codebase                        |
+| Lecturer / Stakeholder | -       | Clean architecture, proper documentation and working prototype       |
 
-# Architecture Constraints {#section-architecture-constraints}
+# 2 Architecture Constraints {#section-architecture-constraints}
+## 2.1 Technical Constraints
+The system is developed under the following technical constraints:
+- Implementation language: C++
+- Use of SFML for audio processing
+- Use of Dear ImGui for the user interface
+- Cross-platform support: Windows, macOS, Linux
+- Build system: CMake
+- CI/CD via GitHub Actions
+- Local execution only (no cloud/backend components)
+
+## 2.2 Organizational Constraints
+The project is developed under the following organizational conditions:
+- Team of four developers
+- Agile development using Scrum (weekly Sprints)
+- Task Management via GitHub Projects and Kanban board
+- Version control with GitHub
+- Fixed deadlines defined by the course schedule
+
+## 2.3 Conventions
+The following conventions are applied:
+- Code follows consistent naming conventions (e.g. camelCase / UpperCamelCase)
+- Code formatting is enforced using clang-format
+- Documentation is written in Markdown
+- UML diagrams are created using PlantUML / draw.io
 
 # Context and Scope {#section-context-and-scope}
 
