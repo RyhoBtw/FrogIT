@@ -70,23 +70,65 @@ The following conventions are applied:
 - Documentation is written in Markdown
 - UML diagrams are created using PlantUML / draw.io
 
-# Context and Scope {#section-context-and-scope}
+# 3 Context and Scope {#section-context-and-scope}
 
-## Business Context {#_business_context}
+## 3.1 Business Context {#_business_context}
 
-**\<Diagram or Table\>**
+| Actor             | Interaction                                              |
+| ----------------- | -------------------------------------------------------- |
+| User              | Creates and customizes soundscapes, interacts with frogs |
+| Local File System | Stores and loads presets and audio resources             |
+**Explanation**:
+The user interacts directly with FrogIT to create and control soundscapes.
+All data (e.g. presets, audio files) is stored locally on the system.
+There are no external services or network dependencies.
 
-**\<optionally: Explanation of external domain interfaces\>**
+## 3.2 Technical Context {#_technical_context}
 
-## Technical Context {#_technical_context}
+| Component              | Interface                         |
+| ---------------------- | --------------------------------- |
+| User Interface (ImGui) | User input (mouse, keyboard)      |
+| Audio System (SFML)    | Playback of sounds files          |
+| File System            | Read/write presets and resources  |
+| Operating System       | Window management, input handling |
+### Mapping Input / Output to Channels
 
-**\<Diagram or Table\>**
+| Input / Output               | Channel                  |
+| ---------------------------- | ------------------------ |
+| User input (clicks, sliders) | GUI (Dear ImGUI)         |
+| Audio output                 | Speakers via SFML        |
+| Visual Output (frogs, UI)    | Screen                   |
+| Preset data                  | Local file system (JSON) |
 
-**\<optionally: Explanation of technical interfaces\>**
 
-**\<Mapping Input/Output to Channels\>**
+# 4 Solution Strategy {#section-solution-strategy}
+The architecture of FrogIT follows a modular and layered approach to ensure maintainability, extensibility and performance
 
-# Solution Strategy {#section-solution-strategy}
+## Key Design Decisions
+- **Layered Architecture**
+	Separation into UI, application logic and resource handling to keep responsibilities clearly structured.
+- **Modular Design**
+	Components such as sound management, animation and UI are implemented independently to allow easy extension.
+- **Dedicated Audio Handling**
+	Audio processing is separated from the UI to ensure smooth, low-latency playback.
+- **Observer Pattern**
+	Used to connect audio events with frog animations while keeping components loosely coupled.
+- **Asynchronous Resource Handling**
+	Resources such as audio files are loaded without the application.
+
+## Technology Choices
+- C++ as main programming language
+- SFML for audio playback and basic rendering
+- Dear ImGui for the graphical user interface
+- CMake for build configuration
+- GitHub Actions for CI/CD
+
+## Quality Focus
+The solution strategy is mainly driven by the following quality goals:
+- **Performance**: real-time audio without interruptions
+- **Maintainability**: clean structure and separation of concerns
+- **Usability**: simple and intuitive interaction
+- **Reliability**: stable handling of resources and playback
 
 # Building Block View {#section-building-block-view}
 
