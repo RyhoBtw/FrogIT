@@ -1,6 +1,3 @@
-
-# 
-
 **About arc42**
 
 arc42, the template for documentation of software and system
@@ -130,81 +127,85 @@ The solution strategy is mainly driven by the following quality goals:
 - **Usability**: simple and intuitive interaction
 - **Reliability**: stable handling of resources and playback
 
-# Building Block View {#section-building-block-view}
+# 5 Building Block View {#section-building-block-view}
 
-## Whitebox Overall System {#_whitebox_overall_system}
+## Level 1: Whitebox Overall System
 
-***\<Overview Diagram\>***
+The system as seen from the outside, decomposed into its top-level building blocks. External actors and systems are shown at the boundary.
 
-Motivation
+![component1](comp1.png)  
 
-:   *\<text explanation\>*
+### Black Box Descriptions
 
-Contained Building Blocks
+| Building Block | Responsibility |
+|---|---|
+| **FrogApp** | Application orchestrator — window lifecycle, frog collection, event loop, rendering |
+| **Frog** | Individual frog entity — animation, sprite state, user interaction |
+| **ResourceManager** | Singleton asset cache — preloads and caches textures, images, sounds |
+| **SoundScape** | Audio controller — manages sound playback (implementation pending) |
+| **FrogSettingsUI** | User configuration UI (placeholder for future) |
+| **Constants** | Centralised config values (framerate, dimensions, scaling, etc.) |
 
-:   *\<Description of contained building block (black boxes)\>*
+### External Systems
 
-Important Interfaces
+| System | Description |
+|---|---|
+| **Desktop User** | Interacts with frogs via mouse clicks on the desktop overlay |
+| **SFML Graphics** | Windowing, sprite, and texture rendering library |
+| **SFML Audio** | Sound and sound-buffer playback library |
+| **OS Desktop** | Host operating system providing the transparent overlay surface |
 
-:   *\<Description of important interfaces\>*
+---
 
-### \<Name black box 1\> {#_name_black_box_1}
+## Level 2: Whitebox FrogApp & Frog
 
-*\<Purpose/Responsibility\>*
+Zooms into the two most important Level 1 building blocks.
 
-*\<Interface(s)\>*
+![component2](comp2.png)  
 
-*\<(Optional) Quality/Performance Characteristics\>*
+### Black Box Descriptions — FrogApp Internals
 
-*\<(Optional) Directory/File Location\>*
+| Building Block | Responsibility |
+|---|---|
+| **Window Manager** | Creates and configures the transparent render window with desktop integration |
+| **Frog Collection** | Owns vector of active Frog entities via `unique_ptr` |
+| **Event Processor** | Handles OS events (close, mouse click) and routes them to frogs |
+| **Render Pipeline** | Updates all frogs each frame, renders sprites to window |
+| **Speech Bubble Mgr** | Manages overlay window for frog dialogue display |
 
-*\<(Optional) Fulfilled Requirements\>*
+### Black Box Descriptions — Frog Internals
 
-*\<(optional) Open Issues/Problems/Risks\>*
+| Building Block | Responsibility |
+|---|---|
+| **Animation State** | Manages hop sequences, timing, and arc calculation |
+| **Sprite Manager** | Handles position, scale, and sprite rendering |
+| **Speech State** | Controls speech bubble visibility and text content |
 
-### \<Name black box 2\> {#_name_black_box_2}
+---
 
-*\<black box template\>*
+## Level 3: Whitebox Animation State & Event Processor
 
-### \<Name black box n\> {#_name_black_box_n}
+Zooms into the most complex Level 2 blocks.
 
-*\<black box template\>*
+![component3](comp3.png)  
 
-### \<Name interface 1\> {#_name_interface_1}
+### Black Box Descriptions
 
-...
+| Building Block | Responsibility |
+|---|---|
+| **Hop Calculator** | Computes parabolic arc position using elapsed time |
+| **Position Updater** | Applies delta-time based position updates |
+| **Frame Selector** | Switches between open/closed mouth textures during animation |
+| **Click Routing** | Performs hit-test on all frogs and dispatches click to matching entity |
 
-### \<Name interface m\> {#_name_interface_m}
+---
 
-## Level 2 {#_level_2}
+**Key changes from the original:**
 
-### White Box *\<building block 1\>* {#_white_box_building_block_1}
-
-*\<white box template\>*
-
-### White Box *\<building block 2\>* {#_white_box_building_block_2}
-
-*\<white box template\>*
-
-...
-
-### White Box *\<building block m\>* {#_white_box_building_block_m}
-
-*\<white box template\>*
-
-## Level 3 {#_level_3}
-
-### White Box \<\_building block x.1\_\> {#_white_box_building_block_x_1}
-
-*\<white box template\>*
-
-### White Box \<\_building block x.2\_\> {#_white_box_building_block_x_2}
-
-*\<white box template\>*
-
-### White Box \<\_building block y.1\_\> {#_white_box_building_block_y_1}
-
-*\<white box template\>*
+- **Split into 3 separate diagrams** (one per level), as arc42 requires.
+- **Added `Desktop User` actor** and **`OS Desktop`** as external entities at Level 1 — the context boundary.
+- **Each level only zooms into selected blocks** from the level above (not everything at once).
+- **Added black box description tables** per level in the standard arc42 format (Name + Responsibility).
 
 # Runtime View {#section-runtime-view}
 

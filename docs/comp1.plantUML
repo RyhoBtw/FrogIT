@@ -1,0 +1,43 @@
+```plantuml
+@startuml FrogIT_Level1
+skinparam backgroundColor #FEFEFE
+skinparam component {
+  BackgroundColor #E1F5FE
+  BorderColor #0277BD
+  ArrowColor #0277BD
+}
+
+actor "Desktop User" as User
+
+package "FrogIT" #ALICEBLUE {
+  component "FrogApp"           as FrogApp
+  component "Frog"              as Frog
+  component "ResourceManager"   as ResMgr
+  component "SoundScape"        as Sound
+  component "FrogSettingsUI"    as Settings
+  database  "Constants"         as Const
+}
+
+package "External" #F3E5F5 {
+  component "SFML Graphics" as SFML_G
+  component "SFML Audio"    as SFML_A
+  component "OS Desktop"    as OS
+}
+
+User  -down->  FrogApp : clicks / interacts
+FrogApp -->    Frog
+FrogApp -->    ResMgr
+FrogApp -->    Sound
+FrogApp -->    Settings
+FrogApp -->    Const
+Frog   -->     ResMgr
+Frog   -->     Const
+
+ResMgr  -down-> SFML_G
+ResMgr  -down-> SFML_A
+Sound   -down-> SFML_A
+FrogApp -down-> SFML_G
+FrogApp -down-> OS : transparent\nwindow
+
+@enduml
+```

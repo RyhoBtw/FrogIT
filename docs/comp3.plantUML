@@ -1,0 +1,25 @@
+```plantuml
+@startuml FrogIT_Level3
+skinparam backgroundColor #FEFEFE
+skinparam component {
+  BackgroundColor #FFFACD
+  BorderColor #E65100
+  ArrowColor #E65100
+}
+
+package "Animation State (whitebox)" #FFFACD {
+  component "Hop Calculator"    as HopCalc
+  component "Position Updater"  as PosUpdate
+  component "Frame Selector"    as FrameSelect
+}
+
+package "Event Processor (whitebox)" #FFFACD {
+  component "Click Routing"     as ClickRoute
+}
+
+HopCalc    -right-> PosUpdate   : new position
+HopCalc    -down->  FrameSelect : mouth state
+ClickRoute -[hidden]down-> HopCalc
+
+@enduml
+```

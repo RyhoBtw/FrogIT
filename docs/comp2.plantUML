@@ -1,0 +1,41 @@
+```plantuml
+@startuml FrogIT_Level2
+skinparam backgroundColor #FEFEFE
+skinparam component {
+  BackgroundColor #FFF9C4
+  BorderColor #F9A825
+  ArrowColor #F9A825
+}
+
+package "FrogApp (whitebox)" #FFF9C4 {
+  component "Window Manager"       as WinMgr
+  component "Frog Collection"      as FrogCol
+  component "Event Processor"      as EvtProc
+  component "Render Pipeline"      as Pipeline
+  component "Speech Bubble Mgr"    as SpeechMgr
+}
+
+package "Frog (whitebox)" #FFF9C4 {
+  component "Animation State"      as AnimState
+  component "Sprite Manager"       as SpriteMgr
+  component "Speech State"         as SpeechState
+}
+
+' FrogApp internals
+WinMgr   -[hidden]right-> FrogCol
+FrogCol  -[hidden]right-> EvtProc
+EvtProc  -[hidden]right-> Pipeline
+Pipeline -[hidden]right-> SpeechMgr
+
+' Frog internals
+AnimState  -[hidden]right-> SpriteMgr
+SpriteMgr  -[hidden]right-> SpeechState
+
+' Cross-package
+EvtProc  -down-> FrogCol  : queries
+Pipeline -down-> FrogCol  : iterates
+FrogCol  -down-> AnimState : delegates\nupdate
+FrogCol  -down-> SpriteMgr : delegates\nrender
+
+@enduml
+```
