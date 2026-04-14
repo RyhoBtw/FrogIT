@@ -1,0 +1,35 @@
+```plantuml
+@startuml FrogIT_Startup
+skinparam backgroundColor #FEFEFE
+autonumber
+
+actor "OS Desktop" as OS
+participant "FrogApp"        as App
+participant "ResourceManager" as ResMgr
+participant "SFML Graphics"   as SFML
+participant "Frog"            as Frog
+participant "Constants"       as Const
+
+OS -> App : launch process
+App -> Const : read config\n(framerate, dimensions)
+App -> ResMgr : preloadAll()
+ResMgr -> SFML : loadTexture() ×N
+SFML --> ResMgr : Texture handles
+ResMgr -> SFML : loadSoundBuffer() ×N
+SFML --> ResMgr : SoundBuffer handles
+
+App -> SFML : create RenderWindow\n(transparent, topmost)
+SFML --> App : window handle
+
+loop for each frog to spawn
+  App -> Frog ** : create(randomPosition)
+  Frog -> ResMgr : getTexture("frog")
+  ResMgr --> Frog : Texture ref
+  Frog -> Const : get scaleFactor
+  Const --> Frog : value
+end
+
+App -> App : enter main loop
+
+@enduml
+```

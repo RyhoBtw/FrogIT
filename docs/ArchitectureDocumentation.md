@@ -155,8 +155,6 @@ The system as seen from the outside, decomposed into its top-level building bloc
 | **SFML Audio** | Sound and sound-buffer playback library |
 | **OS Desktop** | Host operating system providing the transparent overlay surface |
 
----
-
 ## Level 2: Whitebox FrogApp & Frog
 
 Zooms into the two most important Level 1 building blocks.
@@ -181,8 +179,6 @@ Zooms into the two most important Level 1 building blocks.
 | **Sprite Manager** | Handles position, scale, and sprite rendering |
 | **Speech State** | Controls speech bubble visibility and text content |
 
----
-
 ## Level 3: Whitebox Animation State & Event Processor
 
 Zooms into the most complex Level 2 blocks.
@@ -198,29 +194,63 @@ Zooms into the most complex Level 2 blocks.
 | **Frame Selector** | Switches between open/closed mouth textures during animation |
 | **Click Routing** | Performs hit-test on all frogs and dispatches click to matching entity |
 
----
+Here's the complete Chapter 6. Building block names match Chapter 5 throughout.
 
-**Key changes from the original:**
+# 6 Runtime View {#section-runtime-view}
 
-- **Split into 3 separate diagrams** (one per level), as arc42 requires.
-- **Added `Desktop User` actor** and **`OS Desktop`** as external entities at Level 1 — the context boundary.
-- **Each level only zooms into selected blocks** from the level above (not everything at once).
-- **Added black box description tables** per level in the standard arc42 format (Name + Responsibility).
+This section shows how the building blocks from the [Building Block View](#section-building-block-view) collaborate at runtime. Scenarios are chosen for architectural relevance, not completeness.
 
-# Runtime View {#section-runtime-view}
+## 6.1 Application Startup
 
-## \<Runtime Scenario 1\> {#_runtime_scenario_1}
+How FrogIT initialises itself from launch to first rendered frame.
 
-- *\<insert runtime diagram or textual description of the scenario\>*
-- *\<insert description of the notable aspects of the interactions between the building block instances depicted in this diagram.\>*
+![sequence1](sequence1.png)
 
-## \<Runtime Scenario 2\> {#_runtime_scenario_2}
+**Notable aspects:**
 
-## ...
+- **ResourceManager** loads all assets **once** at startup — frogs only hold references, never duplicate textures.
+- The render window is created with OS-level transparency flags so the frog sits directly on the desktop.
+- Frog instances are heap-allocated via `unique_ptr` and owned by the **Frog Collection** inside FrogApp.
 
-## \<Runtime Scenario n\> {#_runtime_scenario_n}
+## 6.2 Main Game Loop (Single Frame)
 
-# Deployment View {#section-deployment-view}
+The core loop that runs every frame (~60 fps). This is the heartbeat of the application.
+
+![sequence2](sequence2.png)
+
+**Notable aspects:**
+
+- The loop follows a strict **Event → Update → Render** order each frame.
+- **Delta-time** is used for all movement so animation speed is independent of framerate.
+- The Render Pipeline iterates the Frog Collection twice: once for update, once for draw.
+
+## 6.3 User Clicks a Frog
+
+What happens when the desktop user clicks on a frog — from OS event to speech bubble.
+
+![sequence3](sequence3.png)
+
+**Notable aspects:**
+
+- **Click Routing** performs a hit-test against all frogs in the collection; the **first** matching frog handles the event.
+- The **Speech Bubble Mgr** creates a separate small overlay window positioned near the frog — it is not drawn inside the main render window.
+- Sound playback is fire-and-forget via **SoundScape**.
+
+## 6.4 Frog Hop Animation
+
+How a single hop is calculated and rendered across multiple frames.
+
+![sequence4](sequence4.png)
+
+**Notable aspects:**
+
+- The hop arc uses a **parabolic interpolation**: $y = \text{lerp}(y_0, y_1, t) - h \cdot 4t(1-t)$, giving a smooth jump curve.
+- **Frame Selector** swaps the mouth texture at the midpoint of the hop — creating the illusion of a croak during the jump.
+- After a hop completes, the Animation State picks a random idle delay before scheduling the next hop.
+
+**Exception:** If the calculated landing position is off-screen, the hop target is clamped to the nearest screen edge.
+
+# 7 Deployment View {#section-deployment-view}
 
 ## Infrastructure Level 1 {#_infrastructure_level_1}
 

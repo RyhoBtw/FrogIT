@@ -1,0 +1,39 @@
+```plantuml
+@startuml FrogIT_Hop
+skinparam backgroundColor #FEFEFE
+autonumber
+
+participant "Frog"              as Frog
+participant "Animation State"   as Anim
+participant "Hop Calculator"    as Hop
+participant "Position Updater"  as Pos
+participant "Frame Selector"    as Frame
+participant "Sprite Manager"    as Spr
+
+Frog -> Anim : startHop(target)
+Anim -> Hop : init(start, target, duration)
+
+loop each frame while hop active
+  Frog -> Anim : step(deltaTime)
+  Anim -> Hop : evaluate(elapsed)
+  note right of Hop
+    x = lerp(start.x, target.x, t)
+    y = lerp(start.y, target.y, t)\n      - arcHeight × 4t(1−t)
+  end note
+  Hop -> Pos : apply(x, y)
+  Pos --> Anim : updated position
+
+  Anim -> Frame : selectFrame(t)
+  alt t < 0.5
+    Frame --> Spr : mouth open texture
+  else t >= 0.5
+    Frame --> Spr : mouth closed texture
+  end
+
+  Spr -> Spr : setPosition()\nsetTexture()
+end
+
+Anim -> Anim : hop complete\npick next idle delay
+
+@enduml
+```

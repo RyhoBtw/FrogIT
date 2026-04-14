@@ -1,0 +1,43 @@
+
+```plantuml
+@startuml FrogIT_GameLoop
+skinparam backgroundColor #FEFEFE
+autonumber
+
+participant "FrogApp"          as App
+participant "Event Processor"  as Evt
+participant "Frog Collection"  as Col
+participant "Frog"             as Frog
+participant "Animation State"  as Anim
+participant "Sprite Manager"   as Spr
+participant "Render Pipeline"  as Pipe
+participant "SFML Graphics"    as SFML
+
+App -> App : clock.restart()\nget deltaTime
+
+== Event Phase ==
+App -> Evt : pollEvents()
+Evt -> SFML : pollEvent()
+SFML --> Evt : event queue
+note right of Evt : close / click events\nhandled here (see 6.3)
+
+== Update Phase ==
+App -> Pipe : updateAll(deltaTime)
+loop for each Frog in Collection
+  Pipe -> Frog : update(deltaTime)
+  Frog -> Anim : step(deltaTime)
+  Anim -> Anim : calculate hop arc\nposition
+  Anim --> Frog : new position
+  Frog -> Spr : setPosition()\nselectFrame()
+end
+
+== Render Phase ==
+App -> SFML : window.clear()
+loop for each Frog in Collection
+  Pipe -> Spr : draw()
+  Spr -> SFML : window.draw(sprite)
+end
+App -> SFML : window.display()
+
+@enduml
+```

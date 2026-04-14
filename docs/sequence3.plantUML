@@ -1,0 +1,43 @@
+```plantuml
+@startuml FrogIT_Click
+skinparam backgroundColor #FEFEFE
+autonumber
+
+actor "Desktop User"       as User
+participant "SFML Graphics" as SFML
+participant "Event Processor" as Evt
+participant "Click Routing"   as Route
+participant "Frog Collection" as Col
+participant "Frog"            as Frog
+participant "Speech State"    as Speech
+participant "Speech Bubble Mgr" as Bubble
+participant "SoundScape"      as Sound
+participant "SFML Audio"      as SFML_A
+
+User -> SFML : mouse click on desktop
+SFML -> Evt : MouseButtonPressed event
+
+Evt -> Route : dispatch(clickPos)
+Route -> Col : iterate frogs
+loop for each Frog
+  Route -> Frog : hitTest(clickPos)
+  Frog --> Route : hit / miss
+end
+
+alt frog was hit
+  Route -> Frog : onClick()
+  Frog -> Speech : activate("Ribbit!")
+  Speech --> Frog : bubble timer started
+
+  Frog -> Sound : playCroak()
+  Sound -> SFML_A : play(croakBuffer)
+
+  Frog -> Bubble : showBubble(text, position)
+  Bubble -> SFML : create overlay window
+  note right of Bubble : bubble disappears\nafter timer expires
+else no frog hit
+  Route --> Evt : ignored
+end
+
+@enduml
+```
