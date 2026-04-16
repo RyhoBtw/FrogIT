@@ -284,7 +284,7 @@ Mapping of Building Blocks to Infrastructure
 
 *\<diagram + explanation\>*
 
-# Cross-cutting Concepts {#section-concepts}
+# 8 Cross-cutting Concepts {#section-concepts}
 
 ## *\<Concept 1\>* {#_concept_1}
 
@@ -300,17 +300,291 @@ Mapping of Building Blocks to Infrastructure
 
 *\<explanation\>*
 
-# Architecture Decisions {#section-design-decisions}
+# 9 Architecture Decisions {#section-design-decisions}
 
-# Quality Requirements {#section-quality-scenarios}
+This section documents the key architectural decisions made during the development of FrogIT.
+Each decision is captured as an Architecture Decision Record (ADR), following a lightweight format
+that includes context, considered options, the chosen solution, and its consequences.
+
+| ADR   | Title                                              | Status   |
+|-------|----------------------------------------------------|----------|
+| [ADR-0001](#adr-0001) | Use a Dedicated Audio Thread for Low-Latency Playback | Accepted |
+| [ADR-0002](#adr-0002) | Use SFML for Audio and Dear ImGui for the UI          | Accepted |
+| [ADR-0003](#adr-0003) | Use JSON as the Format for Saving Presets             | Accepted |
+
+---
+
+## ADR-0001 — Use a Dedicated Audio Thread for Low-Latency Playback {#adr-0001}
+
+**Status:** Accepted
+
+**Context:**
+FrogIT must play ambient sounds in real time while the user interface remains responsive.
+Running audio and UI on the same thread causes audio stutters and UI lag under load.
+
+**Decision:**
+Use **multi-threading with a dedicated audio thread** to isolate audio processing from the UI event loop.
+This integrates cleanly with SFML and is the most reliable way to guarantee real-time audio playback.
+
+**Alternatives considered:**
+- Single-threaded model (UI + audio together)
+- External audio backend with real-time prioritization
+- Event-based audio processing without its own thread
+
+<details>
+<summary>Consequences</summary>
+
+| Type     | Description                                                      |
+|----------|------------------------------------------------------------------|
+| ✅ Positive | Stable, low-latency audio playback even under UI load          |
+| ✅ Positive | UI remains fully responsive                                    |
+| ⚠️ Negative | Higher complexity due to thread synchronization requirements  |
+| ⚠️ Negative | Requires more thorough testing for race conditions            |
+
+</details>
+
+---
+
+## ADR-0002 — Use SFML for Audio and Dear ImGui for the UI {#adr-0002}
+
+**Status:** Accepted
+
+**Context:**
+FrogIT requires audio playback, windowed rendering, and a user interface. The chosen tools must be
+lightweight, C++-friendly, and quick to integrate within the team's time constraints.
+
+**Decision:**
+Use **SFML** for audio and rendering and **Dear ImGui** for the graphical user interface.
+This combination minimises boilerplate, is beginner-friendly, and fits the project scope.
+
+**Alternatives considered:**
+- SDL2 + ImGui
+- Qt (full framework)
+- Custom UI + custom audio backend
+
+<details>
+<summary>Consequences</summary>
+
+| Type     | Description                                                              |
+|----------|--------------------------------------------------------------------------|
+| ✅ Positive | Fast prototyping with minimal setup complexity                        |
+| ✅ Positive | SFML is easy to learn and well-documented for C++ beginners           |
+| ⚠️ Negative | SFML does not guarantee the lowest possible audio latency             |
+| ⚠️ Negative | Dear ImGui uses an immediate-mode model, not a native desktop UI paradigm |
+
+</details>
+
+---
+
+## ADR-0003 — Use JSON as the Format for Saving Presets {#adr-0003}
+
+**Status:** Accepted
+
+**Context:**
+Users can save and load sound profiles (presets). The storage format must be structured,
+human-editable, and stable across application versions. Local-only storage is required per
+the privacy constraints (see Section 2.1).
+
+**Decision:**
+Use **JSON** for serialising and deserialising soundscape presets, using the `nlohmann/json` library.
+JSON is simple, widely supported, and ideal for configuration/preset data.
+
+**Alternatives considered:**
+- XML
+- Binary format
+- YAML
+- TOML
+
+<details>
+<summary>Consequences</summary>
+
+| Type     | Description                                                        |
+|----------|--------------------------------------------------------------------|
+| ✅ Positive | Human-readable files allow easy manual debugging and editing    |
+| ✅ Positive | Many stable, well-maintained C++ JSON parsers are available     |
+| ⚠️ Negative | JSON files are larger and slightly slower to parse than binary formats |
+| ⚠️ Negative | JSON has weaker typing compared to XML or TOML                 |
+
+</details>
+
+# 10 Quality Requirements {#section-quality-scenarios}
 
 ## Quality Requirements Overview {#_quality_requirements_overview}
 
+The quality requirements for FrogIT are derived from the quality tree established during the
+architecture definition phase. They refine and operationalise the top-level quality goals stated
+in [Section 1.2](#_quality_goals) into concrete, measurable scenarios.
+
+![quality-tree](quality_tree.png)
+
+The tree is structured around five top-level quality dimensions:
+
+| Quality Dimension          | Priority | Quality IDs  |
+|----------------------------|----------|--------------|
+| Performance                | 🔴 High  | Q3           |
+| Maintainability / Extensibility | 🔴 High | Q5          |
+| Usability                  | 🟡 Medium | Q1, Q2      |
+| Reliability / Availability | 🟡 Medium | Q4          |
+| Security / Privacy         | 🟢 Low   | Q6           |
+
+### Quality Attributes
+
+| ID | Quality Dimension | Description |
+|----|-------------------|-------------|
+| Q1 | Usability | Intuitive control of mixer and presets |
+| Q2 | Usability | Non-intrusive frog animations while the user works |
+| Q3 | Performance | Low-latency, continuous audio playback (real-time mixing) |
+| Q4 | Reliability / Availability | Robust playback with graceful recovery from missing or corrupt resources |
+| Q5 | Maintainability / Extensibility | Easy to add new sound types, animation behaviours, or UI components |
+| Q6 | Security / Privacy | Local-only storage of user presets with no telemetry by default |
+
+---
+
 ## Quality Scenarios {#_quality_scenarios}
 
-# Risks and Technical Debts {#section-technical-risks}
+Quality scenarios make quality requirements concrete and testable. Each scenario follows the
+arc42 stimulus–response structure. Scenarios marked **ASR** are architecture-significant and
+directly influenced architectural decisions.
 
-# Glossary {#section-glossary}
+---
+
+### Scenario A — Low-Latency Audio Playback 🔴 ASR {#scenario-a}
+
+> *Relates to: Q3 — Performance*
+
+| Field | Description |
+|---|---|
+| **Source** | End user (interactive control) |
+| **Trigger** | User presses Play or adjusts a volume slider while playback is active |
+| **Artifact** | Sound engine / mixer |
+| **Environment** | Desktop (Windows; background CPU load typical for office work) |
+| **Response** | Playback responds to user action without audible glitch; adopted changes (volume, pan) are applied within the next audio buffer cycle |
+| **Response Measure** | End-to-end reaction time $\leq 50\,\text{ms}$ from UI action to audible effect; no buffer underruns during normal operation |
+
+<details>
+<summary>Architectural relevance</summary>
+
+This scenario is the primary driver behind **ADR-0001** (dedicated audio thread) and **ADR-0002**
+(SFML). Separating audio from the UI thread ensures that UI load does not cause buffer underruns
+or audible glitches.
+
+</details>
+
+---
+
+### Scenario B — Resource Failure Handling 🟡 {#scenario-b}
+
+> *Relates to: Q4 — Reliability / Availability*
+
+| Field | Description |
+|---|---|
+| **Source** | File system / storage |
+| **Trigger** | A sound resource file is missing or corrupted at playback time |
+| **Artifact** | Sound playback subsystem |
+| **Environment** | User starts a saved preset referencing a missing file |
+| **Response** | Playback continues for other sounds; missing sound is skipped and a non-blocking error message is shown with a remediation option (choose replacement) |
+| **Response Measure** | Playback continues with $\leq 1\,\text{s}$ interruption; user receives an error dialog; application does not crash |
+
+<details>
+<summary>Architectural relevance</summary>
+
+This scenario motivates defensive loading in the **ResourceManager** (fail-safe singleton asset
+cache) and structured error propagation from the **SoundScape** layer up to the UI. It also
+influenced the choice of JSON presets (**ADR-0003**), which allow partial loading of valid entries
+when individual references are missing.
+
+</details>
+
+---
+
+### Scenario C — Non-Intrusive Overlay 🟡 {#scenario-c}
+
+> *Relates to: Q1, Q2 — Usability*
+
+| Field | Description |
+|---|---|
+| **Source** | End user |
+| **Trigger** | User has FrogIT running while switching to other applications |
+| **Artifact** | Animated frog overlay |
+| **Environment** | User working with other desktop applications (multiple windows open) |
+| **Response** | Frogs animate in a non-obstructive overlay mode; user can toggle or minimise the overlay quickly via tray or menu |
+| **Response Measure** | Overlay does not steal focus from other windows; toggle response $\leq 200\,\text{ms}$ |
+
+<details>
+<summary>Architectural relevance</summary>
+
+This scenario shapes the OS-level transparent window configuration managed by the **Window Manager**
+building block and the **Speech Bubble Mgr**, which deliberately uses a *separate* small overlay
+window rather than an in-canvas element to avoid interfering with other application windows.
+
+</details>
+
+---
+
+### Scenario D — Adding a New Sound or Animation 🔴 ASR {#scenario-d}
+
+> *Relates to: Q5 — Maintainability / Extensibility*
+
+| Field | Description |
+|---|---|
+| **Source** | Developer / team |
+| **Trigger** | Developer adds a new sound type or animation effect |
+| **Artifact** | Codebase / modules (`SoundLayer`, `Animation`) |
+| **Environment** | Local development machine; existing CI pipeline active |
+| **Response** | New sound, animation, or texture can be introduced by placing a file in the appropriate asset folder, with minimal or no changes to core logic |
+| **Response Measure** | Adding a single resource is a single-file operation with no changes to existing business logic required |
+
+<details>
+<summary>Architectural relevance</summary>
+
+This is the primary driver of the **modular design** and **layered architecture** described in
+Section 4. The **ResourceManager** singleton and asset-folder convention directly support this
+scenario by decoupling resource discovery from application logic.
+
+</details>
+
+---
+
+### Scenario E — Local-Only Preset Persistence 🟢 {#scenario-e}
+
+> *Relates to: Q6 — Security / Privacy*
+
+| Field | Description |
+|---|---|
+| **Source** | User |
+| **Trigger** | User saves a preset |
+| **Artifact** | Preset persistence layer |
+| **Environment** | Local machine (all platforms) |
+| **Response** | Preset is saved only to the local file system; no automatic network transmission occurs; any explicit export action prompts the user first |
+| **Response Measure** | No network activity occurs during save; verifiable by inspecting the locally written JSON file |
+
+<details>
+<summary>Architectural relevance</summary>
+
+This scenario reinforces the local-only architecture constraint from Section 2.1 and the choice
+of JSON as the preset format (**ADR-0003**), which produces a transparent, inspectable file with
+no hidden metadata or remote references.
+
+</details>
+
+---
+
+## Mapping: Architecture-Significant Requirements (ASRs)
+
+The following table summarises which scenarios are considered architecture-significant and
+their relative priority:
+
+| Priority | Scenario | Quality Dimension | Key Architectural Response |
+|----------|----------|-------------------|---------------------------|
+| 🔴 High  | [Scenario A](#scenario-a) — Low-latency audio | Performance | Dedicated audio thread (ADR-0001), SFML (ADR-0002) |
+| 🔴 High  | [Scenario D](#scenario-d) — Extensibility | Maintainability | Modular design, asset-folder convention, ResourceManager |
+| 🟡 Medium | [Scenario B](#scenario-b) — Resource failure | Reliability | Defensive ResourceManager, fail-safe SoundScape loading |
+| 🟡 Medium | [Scenario C](#scenario-c) — Non-intrusive overlay | Usability | Separate overlay windows, no focus stealing |
+| 🟢 Low   | [Scenario E](#scenario-e) — Local persistence | Security / Privacy | Local JSON files only, no network layer (ADR-0003) |
+
+# 11 Risks and Technical Debts {#section-technical-risks}
+
+# 12 Glossary {#section-glossary}
 
 | Term | Definition |
 |---|---|
