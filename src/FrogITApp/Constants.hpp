@@ -13,6 +13,10 @@ constexpr float UI_SLIDER_MAX = 10.0F;
 constexpr float UI_DISTANCE_MULT_BUTTON = 2.5F;
 constexpr float FROG_TARGET_HEIGHT = 150.0F;
 
+// Frog management constants
+constexpr int FROG_COUNT_MAX = 200;
+constexpr int FROG_COUNT_MIN = 1;
+
 // Frog hop constants
 constexpr float HOP_DISTANCE_MIN = 60.f;
 constexpr float HOP_DISTANCE_MAX = 200.f;

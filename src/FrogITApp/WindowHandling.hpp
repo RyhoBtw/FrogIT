@@ -10,6 +10,7 @@ class WindowHandling
     static void setWindowTopMost(sf::RenderWindow& window);
 
 #ifdef __linux__
+    // Linux-specific shape masking functions for transparent window handling
     static void applyShapeMask(sf::RenderWindow& window, const sf::Texture& texture, float scale, bool flipped);
     static void applyFilledShapeMask(sf::RenderWindow& window, const sf::Texture& texture);
 #endif

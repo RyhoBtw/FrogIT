@@ -21,7 +21,6 @@ class FrogApp
     void updateFrogCount(int newCount);
 
     sf::RenderWindow m_window;
-    sf::Image m_iconImage;
     sf::Clock m_clock;
     sf::Vector2i m_dragOffset = { 0, 0 };
     sf::Sprite m_frameSprite;

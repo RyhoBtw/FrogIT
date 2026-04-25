@@ -12,7 +12,7 @@ Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     , m_texOpen(ResourceManager::getTexture(textureOpen))
     , m_texClosed(ResourceManager::getTexture(textureClosed))
 {
-    float textureHeight = static_cast<float>(m_sprite.getTexture().getSize().y);
+    float textureHeight = static_cast<float>(m_texOpen.getSize().y);
     m_scale = FROG_TARGET_HEIGHT / textureHeight;
     m_sprite.setScale({ m_scale, m_scale });
 }

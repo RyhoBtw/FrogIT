@@ -18,8 +18,6 @@
 #include <optional>
 #include <vector>
 
-#include "FrogApp.hpp"
-
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
 #include "WindowHandling.hpp"
@@ -65,7 +63,13 @@ FrogApp::FrogApp() : m_frameSprite{ ResourceManager::getTexture("frame.png") }
     }
 }
 
-FrogApp::~FrogApp() { ImGui::SFML::Shutdown(); }
+FrogApp::~FrogApp()
+{
+    if (m_speechWindowOpen) {
+        m_speechWindow.close();
+    }
+    ImGui::SFML::Shutdown();
+}
 
 void FrogApp::processWindowEvents()
 {
@@ -152,7 +156,7 @@ void FrogApp::render()
     ImGui::Spacing();
 
     if (ImGui::InputInt("Frogs", &m_frogCount)) {
-        m_frogCount = std::clamp(m_frogCount, 1, 200);
+        m_frogCount = std::clamp(m_frogCount, FROG_COUNT_MIN, FROG_COUNT_MAX);
         updateFrogCount(m_frogCount);
     }
 
