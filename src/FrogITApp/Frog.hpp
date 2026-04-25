@@ -4,6 +4,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <functional>
 
 class Frog
 {
@@ -24,8 +25,16 @@ class Frog
     sf::Vector2f getSpeechBubblePosition() const;
     void updateSpeechBubble(float deltaTime);
 
+    void renderSpeechBubble(sf::RenderWindow& speechWindow,
+                            bool& speechWindowOpen,
+                            Frog*& activeSpeaker,
+                            sf::Font& font,
+                            const std::function<void(sf::RenderWindow&)>& turnInvisible,
+                            const std::function<void(sf::RenderWindow&)>& setTopMost);
+
   private:
     void pickNextHop(sf::Vector2u desktopSize);
+    const std::vector<std::string>& getPhrasesForHour(int hour);
 
     sf::RenderWindow m_window;
     sf::Sprite m_sprite;

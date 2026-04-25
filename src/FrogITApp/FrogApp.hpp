@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Frog.hpp"
+#include "WindowHandling.hpp"
 
 class FrogApp
 {
@@ -17,10 +18,6 @@ class FrogApp
 
   private:
     void initFrogWindow(Frog& frog, unsigned int bPP);
-    void minimizeWindow(sf::RenderWindow& window);
-    void turnWindowBackgroundInvisible(sf::RenderWindow& window);
-    void setWindowTopMost(sf::RenderWindow& window);
-    void renderSpeechBubble(Frog& frog);
     void updateFrogCount(int newCount);
 
     sf::RenderWindow m_window;

@@ -5,58 +5,7 @@
 
 #include <chrono>
 #include <cmath>
-
-namespace {
-
-constexpr float HOP_DISTANCE_MIN = 60.f;
-constexpr float HOP_DISTANCE_MAX = 200.f;
-constexpr float HOP_DURATION_MIN = 0.25f;
-constexpr float HOP_DURATION_MAX = 0.45f;
-constexpr float HOP_HEIGHT_MIN = 25.f;
-constexpr float HOP_HEIGHT_MAX = 60.f;
-constexpr float PAUSE_MIN = 0.8f;
-constexpr float PAUSE_MAX = 3.5f;
-constexpr float SPEECH_DISPLAY_TIME = 4.0f;
-constexpr float PI = 3.14159265f;
-
-const std::vector<std::string>& getPhrasesForHour(int hour)
-{
-    static const std::vector<std::string> morning = {
-        "Guten Morgen!\nSchon wach?",
-        "Quak! Fruehstueck\nvergessen?",
-        "Kaffee gefaellig?\n*quak*",
-        "Noch muede?\nIch auch!",
-        "Der fruehe Frosch\nfaengt die Fliege!"
-    };
-    static const std::vector<std::string> midday = {
-        "Mittagspause!\n*quak quak*",
-        "Hunger? Ich hab\nnoch Fliegen!",
-        "Schon Mittag?\nWie die Zeit\nvergeht!",
-        "Quak! Nicht\nvergessen zu essen!",
-        "Pause machen\nist wichtig! *quak*"
-    };
-    static const std::vector<std::string> afternoon = {
-        "Na, produktiv\nheute? *quak*",
-        "Ich beobachte\ndich... quak!",
-        "Noch ein\nbisschen arbeiten!",
-        "Quak! Fast\nFeierabend!",
-        "Frosch-Tipp:\nMal durchatmen!"
-    };
-    static const std::vector<std::string> evening = {
-        "Feierabend!\n*quak quak*",
-        "Ab ins Bett!\nQuaaak!",
-        "Noch wach?\nIch auch... quak",
-        "Gute Nacht!\n*leises quak*",
-        "Schlaf gut!\nTraeume von\nFroeschen!"
-    };
-
-    if (hour >= 5 && hour < 11) return morning;
-    if (hour >= 11 && hour < 14) return midday;
-    if (hour >= 14 && hour < 18) return afternoon;
-    return evening;
-}
-
-} // namespace
+#include <functional>
 
 Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     : m_sprite(ResourceManager::getTexture(textureOpen))
@@ -66,6 +15,30 @@ Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     float textureHeight = static_cast<float>(m_sprite.getTexture().getSize().y);
     m_scale = FROG_TARGET_HEIGHT / textureHeight;
     m_sprite.setScale({ m_scale, m_scale });
+}
+
+const std::vector<std::string>& Frog::getPhrasesForHour(int hour)
+{
+    static const std::vector<std::string> morning = {
+        "Guten Morgen!\nSchon wach?", "Quak! Fruehstueck\nvergessen?", "Kaffee gefaellig?\n*quak*", "Noch muede?\nIch auch!", "Der fruehe Frosch\nfaengt die Fliege!"
+    };
+    static const std::vector<std::string> midday = {
+        "Mittagspause!\n*quak quak*", "Hunger? Ich hab\nnoch Fliegen!", "Schon Mittag?\nWie die Zeit\nvergeht!", "Quak! Nicht\nvergessen zu essen!", "Pause machen\nist wichtig! *quak*"
+    };
+    static const std::vector<std::string> afternoon = {
+        "Na, produktiv\nheute? *quak*", "Ich beobachte\ndich... quak!", "Noch ein\nbisschen arbeiten!", "Quak! Fast\nFeierabend!", "Frosch-Tipp:\nMal durchatmen!"
+    };
+    static const std::vector<std::string> evening = {
+        "Feierabend!\n*quak quak*", "Ab ins Bett!\nQuaaak!", "Noch wach?\nIch auch... quak", "Gute Nacht!\n*leises quak*", "Schlaf gut!\nTraeume von\nFroeschen!"
+    };
+
+    if (hour >= 5 && hour < 11)
+        return morning;
+    if (hour >= 11 && hour < 14)
+        return midday;
+    if (hour >= 14 && hour < 18)
+        return afternoon;
+    return evening;
 }
 
 void Frog::randomizePosition(sf::Vector2u desktopSize)
@@ -209,6 +182,64 @@ void Frog::updateSpeechBubble(float deltaTime)
     m_speechTimer -= deltaTime;
     if (m_speechTimer <= 0.f) {
         m_showSpeech = false;
+    }
+}
+
+void Frog::renderSpeechBubble(sf::RenderWindow& speechWindow,
+                              bool& speechWindowOpen,
+                              Frog*& activeSpeaker,
+                              sf::Font& font,
+                              const std::function<void(sf::RenderWindow&)>& turnInvisible,
+                              const std::function<void(sf::RenderWindow&)>& setTopMost)
+{
+    if (hasSpeechBubble()) {
+        // Only one speech window at a time — take over if a new frog speaks
+        if (this != activeSpeaker) {
+            if (speechWindowOpen) {
+                speechWindow.close();
+                speechWindowOpen = false;
+            }
+            activeSpeaker = this;
+        }
+
+        if (!speechWindowOpen) {
+            sf::Text text(font, getSpeechText(), 14);
+            auto bounds = text.getLocalBounds();
+            unsigned int bubbleW = static_cast<unsigned int>(bounds.size.x + 24.f);
+            unsigned int bubbleH = static_cast<unsigned int>(bounds.size.y + 20.f);
+
+            speechWindow.create(sf::VideoMode(sf::Vector2u(bubbleW, bubbleH), 32), "Speech", sf::Style::None);
+            turnInvisible(speechWindow);
+            setTopMost(speechWindow);
+            speechWindowOpen = true;
+        }
+
+        auto bubblePos = getSpeechBubblePosition();
+        auto speechSize = speechWindow.getSize();
+        speechWindow.setPosition(sf::Vector2i(
+            static_cast<int>(bubblePos.x - static_cast<float>(speechSize.x) / 2.f),
+            static_cast<int>(bubblePos.y - static_cast<float>(speechSize.y))));
+
+        while (speechWindow.pollEvent()) {}
+
+        speechWindow.clear(sf::Color(60, 60, 60, 230));
+
+        sf::RectangleShape bg(sf::Vector2f(static_cast<float>(speechSize.x), static_cast<float>(speechSize.y)));
+        bg.setFillColor(sf::Color(245, 245, 220));
+        bg.setOutlineColor(sf::Color(80, 130, 80));
+        bg.setOutlineThickness(2.f);
+        speechWindow.draw(bg);
+
+        sf::Text text(font, getSpeechText(), 14);
+        text.setFillColor(sf::Color(40, 40, 40));
+        text.setPosition({ 12.f, 6.f });
+        speechWindow.draw(text);
+
+        speechWindow.display();
+    } else if (speechWindowOpen && activeSpeaker == this) {
+        speechWindow.close();
+        speechWindowOpen = false;
+        activeSpeaker = nullptr;
     }
 }
 
