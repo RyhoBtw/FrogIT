@@ -597,7 +597,20 @@ their relative priority:
 
 # 12 Glossary {#section-glossary}
 
-| Term | Definition |
-|---|---|
-| *\<Term-1\>* | *\<definition-1\>* |
-| *\<Term-2\>* | *\<definition-2\>* |
+| Term            | Definition                                                                                   |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| FrogIT          | Desktop application for creating relaxing soundscapes with animated frog visuals             |
+| Soundscape      | A mix of multiple ambient sounds (e.g., frogs, jungle noise) played simultaneously           |
+| Frog            | Visual entity representing a sound source, including animation and interaction               |
+| FrogApp         | Main application component controlling lifecycle, rendering, and event loop                  |
+| ResourceManager | Central component responsible for loading and caching assets (textures, sounds)              |
+| SoundScape      | Audio subsystem responsible for managing and playing sounds                                  |
+| Preset          | Saved configuration of a soundscape (e.g., selected sounds, volumes), stored locally as JSON |
+| SFML            | C++ multimedia library used for audio playback and rendering                                 |
+| Dear ImGui      | Immediate-mode GUI library used for building the user interface                              |
+| CMake           | Build system used to configure and compile the project                                       |
+| CTest           | CMake-integrated test runner used to execute automated tests                                 |
+| clang-tidy      | Static analysis tool used to detect code quality issues                                      |
+| cppcheck        | Static analysis tool used to detect bugs and undefined behavior                              |
+| CI/CD           | Continuous Integration / Continuous Deployment process used in development                   |
+| GitHub Actions  | CI system used to automatically build and test the project                                   |
