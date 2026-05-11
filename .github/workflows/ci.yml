@@ -15,6 +15,121 @@ env:
 
 
 jobs:
+  # Lizard: Zyklomatische Komplexität & Halstead-Metriken
+  # Once per commits
+  Complexity:i
+    name: Code Complexity (Lizard)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Lizard
+        run: pip install lizard --quiet
+
+      # Analyse läuft über den gesamten src/-Ordner.
+      # --CCN 10  → Warnung, wenn zyklomatische Komplexität > 10
+      # --length 75 → Warnung, wenn Funktion länger als 75 Zeilen
+      # --warnings_only → gibt nur Funktionen aus, die Schwellwerte überschreiten
+      - name: Run Lizard Analysis
+        run: |
+          lizard src/ \
+            --language cpp \
+            --CCN 10 \
+            --length 75 \
+            --xml > lizard_report.xml || true
+
+      # Detaillierte Tabelle als GitHub Actions Job Summary ausgeben
+      - name: Generate Summary
+        run: |
+          python3 - <<'EOF'
+          import xml.etree.ElementTree as ET, os
+
+          tree = ET.parse("lizard_report.xml")
+          root = tree.getroot()
+
+          items = root.findall(".//item")
+          if not items:
+              print("Keine Funktionen gefunden.")
+              exit(0)
+
+          total_ccn   = 0
+          total_vol   = 0
+          count       = 0
+          violations  = []
+
+          for item in items:
+              ccn    = float(item.get("cyclomatic_complexity", 0))
+              length = float(item.get("length", 0))
+              name   = item.get("name", "?")
+              file   = item.get("file", "?")
+
+              total_ccn += ccn
+              count     += 1
+
+              # Halstead Volume approximation: LOC * log2(max(CCN,2))
+              import math
+              vol = length * math.log2(max(ccn, 2))
+              total_vol += vol
+
+              if ccn > 10 or length > 75:
+                  violations.append((name, file, int(ccn), int(length)))
+
+          avg_ccn = total_ccn / count if count else 0
+          avg_vol = total_vol / count if count else 0
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY", "/dev/stdout")
+          with open(summary, "a") as f:
+              f.write("## Lizard – Komplexitätsmetriken\n\n")
+              f.write(f"| Metrik | Wert |\n")
+              f.write(f"|--------|------|\n")
+              f.write(f"| Analysierte Funktionen | **{count}** |\n")
+              f.write(f"| Ø Zyklomatische Komplexität | **{avg_ccn:.2f}** |\n")
+              f.write(f"| Ø Halstead Volume (approx.) | **{avg_vol:.1f}** |\n")
+              f.write(f"| Schwellwert-Verletzungen | **{len(violations)}** |\n\n")
+
+              if violations:
+                  f.write("### ⚠️ Funktionen über Schwellwert (CCN > 10 oder Länge > 75)\n\n")
+                  f.write("| Funktion | Datei | CCN | Länge |\n")
+                  f.write("|----------|-------|-----|-------|\n")
+                  for name, file, ccn, length in violations:
+                      f.write(f"| `{name}` | `{file}` | {ccn} | {length} |\n")
+              else:
+                  f.write("✅ Alle Funktionen liegen innerhalb der Schwellwerte.\n")
+          EOF
+
+      # Optionaler Qualitätsgatecheck: schlägt fehl wenn > 5 Verletzungen
+      - name: Quality Gate
+        run: |
+          python3 - <<'EOF'
+          import xml.etree.ElementTree as ET
+
+          tree = ET.parse("lizard_report.xml")
+          root = tree.getroot()
+
+          violations = [
+              item for item in root.findall(".//item")
+              if float(item.get("cyclomatic_complexity", 0)) > 10
+              or float(item.get("length", 0)) > 75
+          ]
+
+          print(f"Verletzungen: {len(violations)}/5 erlaubt")
+
+          if len(violations) > 5:
+              print(f"::error::Quality Gate fehlgeschlagen: {len(violations)} Funktionen "
+                    f"überschreiten die Komplexitätsschwelle (max. 5 erlaubt)")
+              exit(1)
+          EOF
+
+      - name: Upload Lizard Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lizard-complexity-report
+          path: lizard_report.xml
+
+
+  # Build/Test-Job
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
@@ -25,9 +140,6 @@ jobs:
       #   * support at least 2 operating systems
       #   * support at least 2 compilers
       #   * make sure all supported configurations for your project are built
-      #
-      # Disable/enable builds in this list to meet the above recommendations
-      # and your own projects needs
       matrix:
         os:
           - ubuntu-latest
@@ -231,7 +343,7 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
 
-
+      # TODO enable
       # - name: Publish to codecov
         # uses: codecov/codecov-action@v5
         # with:
