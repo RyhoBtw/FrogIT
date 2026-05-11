@@ -17,7 +17,7 @@ env:
 jobs:
   # Lizard: Zyklomatische Komplexität & Halstead-Metriken
   # Once per commits
-  Complexity:i
+  Complexity:
     name: Code Complexity (Lizard)
     runs-on: ubuntu-latest
 
