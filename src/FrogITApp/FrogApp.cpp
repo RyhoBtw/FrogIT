@@ -202,6 +202,7 @@ void FrogApp::initFrogWindow(Frog& frog, unsigned int bPP)
     frogWindow.create(sf::VideoMode(frog.getScaledSize(), bPP), "Frog", sf::Style::None);
     WindowHandling::turnWindowBackgroundInvisible(frogWindow);
     WindowHandling::setWindowTopMost(frogWindow);
+    WindowHandling::setWindowNoActivate(frogWindow);
 
 #ifdef __linux__
     WindowHandling::applyShapeMask(frogWindow, frog.getSprite().getTexture(), frog.getScale(), false);

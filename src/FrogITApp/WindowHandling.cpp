@@ -77,6 +77,51 @@ void WindowHandling::turnWindowBackgroundInvisible(sf::RenderWindow& window)
 #endif
 }
 
+// Prevents the window from receiving focus and appearing in the Alt-Tab list
+void WindowHandling::setWindowNoActivate(sf::RenderWindow& window)
+{
+#ifdef _WIN32
+    HWND hwnd = window.getNativeHandle();
+    LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT);
+#endif
+
+#ifdef __linux__
+    Display* display = XOpenDisplay(nullptr);
+    if (!display)
+        return;
+
+    ::Window xwindow = window.getNativeHandle();
+
+    // Tell the WM this window should never receive input focus
+    XWMHints* hints = XAllocWMHints();
+    if (hints) {
+        hints->flags = InputHint;
+        hints->input = False;
+        XSetWMHints(display, xwindow, hints);
+        XFree(hints);
+    }
+
+    // Also mark it as a notification-type window (no focus, no taskbar)
+    Atom windowType = XInternAtom(display, "_NET_WM_WINDOW_TYPE", False);
+    Atom typeNotification = XInternAtom(display, "_NET_WM_WINDOW_TYPE_NOTIFICATION", False);
+    XChangeProperty(display, xwindow, windowType, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&typeNotification), 1);
+
+    XFlush(display);
+    XCloseDisplay(display);
+#endif
+}
+
+// Moves the OS window without triggering focus
+void WindowHandling::moveFrogWindow(sf::RenderWindow& window, int x, int y)
+{
+#ifdef _WIN32
+    SetWindowPos(window.getNativeHandle(), nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+#else
+    window.setPosition(sf::Vector2i(x, y));
+#endif
+}
+
 void WindowHandling::setWindowTopMost(sf::RenderWindow& window)
 {
 #ifdef _WIN32

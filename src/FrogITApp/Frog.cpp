@@ -2,6 +2,7 @@
 
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
+#include "WindowHandling.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -128,9 +129,10 @@ void Frog::update(float deltaTime, sf::Vector2u desktopSize)
             m_position = { basePos.x, basePos.y + arcY };
         }
 
-        m_window.setPosition(sf::Vector2i(
-            static_cast<int>(m_position.x),
-            static_cast<int>(m_position.y)));
+        WindowHandling::moveFrogWindow(m_window, 
+            static_cast<int>(m_position.x), 
+            static_cast<int>(m_position.y));
+        
         return;
     }
 
