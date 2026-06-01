@@ -60,3 +60,11 @@ cmake -S . -B ./build
 ```bash
 cmake --build ./build -- -j$(nproc)
 ```
+
+## Run Unit Tests
+
+#### After building, run:
+```bash
+cd build
+ctest
+```

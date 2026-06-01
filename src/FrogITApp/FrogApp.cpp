@@ -127,6 +127,8 @@ void FrogApp::render()
     sf::Time dt = m_clock.restart();
     ImGui::SFML::Update(m_window, dt);
 
+    m_soundScapes.update(dt.asSeconds());
+
     for (auto& frog : m_frogs) {
         frog->update(dt.asSeconds(), m_desktopSize);
 
@@ -148,8 +150,7 @@ void FrogApp::render()
         "UI", &open, static_cast<ImGuiWindowFlags>(static_cast<unsigned int>(ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)));
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + UI_CURSOR_OFFSET_Y);
-    ImGui::SliderFloat("Volume", &m_vol, UI_SLIDER_MIN, UI_SLIDER_MAX);
-    ImGui::SliderFloat("Frequency", &m_freq, UI_SLIDER_MIN, UI_SLIDER_MAX);
+    m_settingsUI.render(m_soundScapes);
 
     ImGui::Spacing();
     ImGui::Separator();

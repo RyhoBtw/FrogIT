@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "Frog.hpp"
+#include "FrogSettingsUI.hpp"
+#include "SoundScapeManager.hpp"
 #include "WindowHandling.hpp"
 
 class FrogApp
@@ -25,8 +27,9 @@ class FrogApp
     sf::Vector2i m_dragOffset = { 0, 0 };
     sf::Sprite m_frameSprite;
     bool m_isDragging = false;
-    float m_vol = 0.0F;
-    float m_freq = 0.0F;
+
+    SoundScapeManager m_soundScapes;
+    FrogSettingsUI m_settingsUI;
 
     sf::Vector2u m_desktopSize;
     unsigned int m_bitsPerPixel = 32;
