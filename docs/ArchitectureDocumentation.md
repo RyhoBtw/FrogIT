@@ -254,35 +254,20 @@ How a single hop is calculated and rendered across multiple frames.
 
 ## Infrastructure Level 1 {#_infrastructure_level_1}
 
-***\<Overview Diagram\>***
+<img width="443" height="192" alt="image" src="https://github.com/user-attachments/assets/435d7659-bf29-4217-8ab0-2d8da0b14033" />
+
 
 Motivation
 
-:   *\<explanation in text form\>*
+FrogIT is designed as a standalone desktop application. All application logic, audio playback, animations, and resource management run locally on the user's machine. No external servers or cloud services are required. This simplifies deployment, reduces dependencies, and supports the project's privacy goals.
 
 Quality and/or Performance Features
 
-:   *\<explanation in text form\>*
+Running entirely on the local machine minimizes audio latency and eliminates network dependencies. This supports the project's performance requirements for real-time sound mixing and improves reliability because the application remains fully functional without an internet connection.
 
 Mapping of Building Blocks to Infrastructure
 
-:   *\<description of the mapping\>*
-
-## Infrastructure Level 2 {#_infrastructure_level_2}
-
-### *\<Infrastructure Element 1\>* {#_infrastructure_element_1}
-
-*\<diagram + explanation\>*
-
-### *\<Infrastructure Element 2\>* {#_infrastructure_element_2}
-
-*\<diagram + explanation\>*
-
-...
-
-### *\<Infrastructure Element n\>* {#_infrastructure_element_n}
-
-*\<diagram + explanation\>*
+All building blocks can be found on the User PC.
 
 # 8 Cross-cutting Concepts {#section-concepts}
 
