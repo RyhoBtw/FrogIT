@@ -50,3 +50,10 @@ constexpr float PAUSE_MIN = 0.8f;
 constexpr float PAUSE_MAX = 3.5f;
 constexpr float SPEECH_DISPLAY_TIME = 4.0f;
 constexpr float PI = 3.14159265f;
+
+// Tongue constants
+constexpr float TONGUE_COOLDOWN_MIN = 8.0f;   // seconds between tongue attacks
+constexpr float TONGUE_COOLDOWN_MAX = 25.0f;
+constexpr float TONGUE_DURATION    = 1.4f;    // how long the tongue stays out
+constexpr float TONGUE_PULL_SPEED  = 300.0f;  // pixels per second cursor is pulled
+constexpr float TONGUE_WIDTH       = 4.0f;

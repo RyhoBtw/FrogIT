@@ -13,6 +13,9 @@ class Frog
     void randomizePosition(sf::Vector2u desktopSize);
     void update(float deltaTime, sf::Vector2u desktopSize);
     void handleClick();
+
+    bool isTongueActive() const;
+    sf::Vector2f getTongueMouthPosition() const;  // screen-space origin of tongue
     sf::Sprite& getSprite();
     sf::RenderWindow& getWindow();
     sf::Vector2u getScaledSize() const;
@@ -65,6 +68,11 @@ class Frog
     bool m_showSpeech = false;
     float m_speechTimer = 0.f;
     std::string m_speechText;
+
+    // Tongue
+    float m_tongueCountdown = 0.f;   // time until next tongue attack
+    float m_tongueTimer    = 0.f;    // remaining active tongue time (0 = inactive)
+    bool  m_tongueActive   = false;
 
     std::mt19937 m_rng{ std::random_device{}() };
 };

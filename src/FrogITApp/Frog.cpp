@@ -20,6 +20,9 @@ Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     float textureHeight = static_cast<float>(m_texOpen.getSize().y);
     m_scale = FROG_TARGET_HEIGHT / textureHeight;
     m_sprite.setScale({ m_scale, m_scale });
+
+    std::uniform_real_distribution<float> cooldownDist(TONGUE_COOLDOWN_MIN, TONGUE_COOLDOWN_MAX);
+    m_tongueCountdown = cooldownDist(m_rng);
 }
 
 const std::vector<std::string>& Frog::getPhrasesForHour(int hour)
@@ -138,6 +141,22 @@ void Frog::update(float deltaTime, sf::Vector2u desktopSize)
     if (!m_window.isOpen()) return;
 
     updateSpeechBubble(deltaTime);
+
+    // Tongue countdown / active timer
+    if (m_tongueActive) {
+        m_tongueTimer -= deltaTime;
+        if (m_tongueTimer <= 0.f) {
+            m_tongueActive = false;
+            std::uniform_real_distribution<float> cooldownDist(TONGUE_COOLDOWN_MIN, TONGUE_COOLDOWN_MAX);
+            m_tongueCountdown = cooldownDist(m_rng);
+        }
+    } else {
+        m_tongueCountdown -= deltaTime;
+        if (m_tongueCountdown <= 0.f) {
+            m_tongueActive = true;
+            m_tongueTimer  = TONGUE_DURATION;
+        }
+    }
 
     if (m_isHopping) {
         m_hopProgress += deltaTime / m_hopDuration;
@@ -306,4 +325,17 @@ bool Frog::consumeDirectionChanged()
         return true;
     }
     return false;
+}
+
+bool Frog::isTongueActive() const { return m_tongueActive; }
+
+sf::Vector2f Frog::getTongueMouthPosition() const
+{
+    auto scaled = getScaledSize();
+    // Mouth is at the front-center of the frog
+    float mouthX = m_facingRight
+        ? m_position.x + static_cast<float>(scaled.x) * 0.85f
+        : m_position.x + static_cast<float>(scaled.x) * 0.15f;
+    float mouthY = m_position.y + static_cast<float>(scaled.y) * 0.45f;
+    return { mouthX, mouthY };
 }

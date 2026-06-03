@@ -112,6 +112,7 @@ void WindowHandling::setWindowNoActivate(sf::RenderWindow& window)
 #endif
 }
 
+
 // Moves the OS window without triggering focus
 void WindowHandling::moveFrogWindow(sf::RenderWindow& window, int x, int y)
 {

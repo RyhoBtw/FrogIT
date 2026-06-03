@@ -21,6 +21,7 @@ class FrogApp
   private:
     void initFrogWindow(Frog& frog, unsigned int bPP);
     void updateFrogCount(int newCount);
+    void renderTongues();
 
     sf::RenderWindow m_window;
     sf::Clock m_clock;
@@ -42,4 +43,8 @@ class FrogApp
     sf::Font m_font;
     bool m_speechWindowOpen = false;
     Frog* m_activeSpeaker = nullptr;
+
+    // Tongue overlay
+    sf::RenderWindow m_tongueWindow;
+    bool m_tongueWindowOpen = false;
 };
