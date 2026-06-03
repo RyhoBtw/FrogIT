@@ -271,19 +271,97 @@ All building blocks can be found on the User PC.
 
 # 8 Cross-cutting Concepts {#section-concepts}
 
-## *\<Concept 1\>* {#_concept_1}
+## Resource Management {#_concept_1}
 
-*\<explanation\>*
+FrogIT uses a centralized ResourceManager to load and manage shared resources such as audio files, textures, and animations.
 
-## *\<Concept 2\>* {#_concept_2}
+Resources are loaded once and reused by multiple components to reduce memory consumption and avoid duplicate loading operations.
 
-*\<explanation\>*
+This concept supports:
 
-...
+Maintainability
+Performance
+Extensibility
 
-## *\<Concept n\>* {#_concept_n}
+## Audio Playback Concept {#_concept_2}
 
-*\<explanation\>*
+Audio playback is implemented using SFML Audio.
+
+Multiple ambient sounds can be played simultaneously and combined into a custom soundscape. The audio subsystem operates independently from the user interface to ensure responsive playback.
+
+The architecture follows ADR-0001 by using a dedicated audio thread for low-latency playback.
+
+This concept supports:
+
+Performance
+Reliability
+User Experience
+
+## User Interface Concept {#_concept_3}
+
+The graphical user interface is implemented using Dear ImGui.
+
+The UI is responsible only for user interaction and visualization. Business logic remains separated from the UI layer.
+
+Examples of UI functionality:
+
+Sound selection
+Volume control
+Frog settings
+Preset management
+
+This follows the Separation of Concerns principle.
+
+## Animation Concept {#_concept_4}
+
+Animated frogs provide visual feedback while the application is running.
+
+Each frog maintains its own position, movement state, and animation state. Animation updates are performed independently of the audio subsystem.
+
+The animation system is designed to support future extensions such as:
+
+Additional frog types
+New movement behaviors
+Interactive frog actions
+
+This concept supports:
+
+Extensibility
+Maintainability
+
+## Error Handling Concept {#_concept_5}
+
+The application follows a graceful degradation strategy.
+
+Whenever possible, errors should not terminate the application. Missing resources or invalid user configurations should result in warnings and fallback behavior instead of crashes.
+
+Example:
+
+Missing phrase → skip phrase
+
+This concept supports:
+
+Reliability
+Robustness
+
+## Testing and Quality Assurance Concept {#_concept_6}
+
+FrogIT uses automated and manual testing to ensure software quality.
+
+Implemented quality measures include:
+
+Unit tests using Catch2
+Test execution through CTest
+Static analysis with clang-tidy, cppcheck, and CodeQL
+Continuous Integration via GitHub Actions
+
+Code quality metrics such as Cyclomatic Complexity and Function Length are automatically collected during CI builds.
+
+This concept supports:
+
+Maintainability
+Testability
+Code Quality
 
 # 9 Architecture Decisions {#section-design-decisions}
 
