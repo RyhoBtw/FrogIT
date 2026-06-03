@@ -8,6 +8,8 @@
 #include <string>
 #include <system_error>
 
+#include <nlohmann/json.hpp>
+
 #include "Constants.hpp"
 #include "ResourceManager.hpp"
 
@@ -63,16 +65,6 @@ namespace
             catalogEntry.category = category;
             out.push_back(std::move(catalogEntry));
         }
-    }
-
-    std::string trim(const std::string& str)
-    {
-        const auto first = str.find_first_not_of(" \t\r\n");
-        if (first == std::string::npos) {
-            return "";
-        }
-        const auto last = str.find_last_not_of(" \t\r\n");
-        return str.substr(first, last - first + 1);
     }
 }
 
@@ -335,27 +327,34 @@ void SoundScapeManager::update(float dtSeconds)
 
 void SoundScapeManager::save() const
 {
+    nlohmann::json root;
+    root["active"] = m_activeIndex;
+    auto& jScapes = root["soundscapes"] = nlohmann::json::array();
+    for (const auto& scape : m_soundScapes) {
+        nlohmann::json jScape;
+        jScape["name"] = scape.name;
+        auto& jSettings = jScape["settings"] = nlohmann::json::array();
+        for (const auto& setting : scape.settings) {
+            nlohmann::json jSetting;
+            jSetting["filename"] = setting.filename;
+            jSetting["enabled"] = setting.enabled;
+            jSetting["volume"] = setting.volume;
+            const int idx = catalogIndexOf(setting.filename);
+            if (idx >= 0
+                && m_catalog.entries[static_cast<std::size_t>(idx)].category == SoundCategory::Ambient) {
+                jSetting["frequency"] = setting.frequency;
+            }
+            jSettings.push_back(std::move(jSetting));
+        }
+        jScapes.push_back(std::move(jScape));
+    }
+
     std::ofstream out{ SOUNDSCAPE_CONFIG_FILE, std::ios::trunc };
     if (!out) {
         std::cout << "Warning: could not write " << SOUNDSCAPE_CONFIG_FILE << '\n';
         return;
     }
-    out << "active=" << m_activeIndex << '\n';
-    for (const auto& scape : m_soundScapes) {
-        out << "[soundscape]\n";
-        out << "name=" << scape.name << '\n';
-        for (const auto& setting : scape.settings) {
-            const int idx = catalogIndexOf(setting.filename);
-            const bool ambient = idx >= 0
-                && m_catalog.entries[static_cast<std::size_t>(idx)].category == SoundCategory::Ambient;
-            const char* prefix = ambient ? "ambient." : "loop.";
-            out << prefix << setting.filename << ".enabled=" << (setting.enabled ? 1 : 0) << '\n';
-            out << prefix << setting.filename << ".vol=" << setting.volume << '\n';
-            if (ambient) {
-                out << prefix << setting.filename << ".freq=" << setting.frequency << '\n';
-            }
-        }
-    }
+    out << root.dump(2) << '\n';
 }
 
 void SoundScapeManager::load()
@@ -365,79 +364,36 @@ void SoundScapeManager::load()
         return;
     }
 
+    nlohmann::json root;
+    try {
+        root = nlohmann::json::parse(in);
+    } catch (...) {
+        return;
+    }
+
     m_soundScapes.clear();
     m_activeIndex = -1;
-    SoundScape* current = nullptr;
 
-    std::string line;
-    while (std::getline(in, line)) {
-        line = trim(line);
-        if (line.empty()) {
-            continue;
-        }
-        if (line == "[soundscape]") {
-            m_soundScapes.emplace_back();
-            current = &m_soundScapes.back();
-            continue;
-        }
-        const auto eq = line.find('=');
-        if (eq == std::string::npos) {
-            continue;
-        }
-        const std::string key = trim(line.substr(0, eq));
-        const std::string value = trim(line.substr(eq + 1));
+    if (root.contains("active") && root["active"].is_number_integer()) {
+        m_activeIndex = root["active"].get<int>();
+    }
 
-        if (key == "active") {
-            try {
-                m_activeIndex = std::stoi(value);
-            } catch (...) {
-                m_activeIndex = -1;
+    for (const auto& jScape : root.value("soundscapes", nlohmann::json::array())) {
+        SoundScape scape;
+        scape.name = jScape.value("name", "");
+        for (const auto& jSetting : jScape.value("settings", nlohmann::json::array())) {
+            const std::string filename = jSetting.value("filename", "");
+            if (filename.empty() || catalogIndexOf(filename) < 0) {
+                continue;
             }
-            continue;
+            SoundSetting setting;
+            setting.filename = filename;
+            setting.enabled = jSetting.value("enabled", false);
+            setting.volume = jSetting.value("volume", SOUND_VOLUME_DEFAULT);
+            setting.frequency = jSetting.value("frequency", AMBIENT_FREQ_DEFAULT);
+            scape.settings.push_back(std::move(setting));
         }
-        if (current == nullptr) {
-            continue;
-        }
-        if (key == "name") {
-            current->name = value;
-            continue;
-        }
-
-        std::string rest;
-        if (key.rfind("loop.", 0) == 0) {
-            rest = key.substr(5);
-        } else if (key.rfind("ambient.", 0) == 0) {
-            rest = key.substr(8);
-        } else {
-            continue;
-        }
-        const auto lastDot = rest.find_last_of('.');
-        if (lastDot == std::string::npos) {
-            continue;
-        }
-        const std::string filename = rest.substr(0, lastDot);
-        const std::string field = rest.substr(lastDot + 1);
-
-        if (catalogIndexOf(filename) < 0) {
-            continue;// sound in file but not on disk anymore: ignore
-        }
-        SoundSetting* setting = current->findSetting(filename);
-        if (setting == nullptr) {
-            current->settings.push_back(
-                SoundSetting{ filename, false, SOUND_VOLUME_DEFAULT, AMBIENT_FREQ_DEFAULT });
-            setting = &current->settings.back();
-        }
-        try {
-            if (field == "enabled") {
-                setting->enabled = std::stoi(value) != 0;
-            } else if (field == "vol") {
-                setting->volume = std::stof(value);
-            } else if (field == "freq") {
-                setting->frequency = std::stof(value);
-            }
-        } catch (...) {
-            // tolerate malformed numeric values: keep the default
-        }
+        m_soundScapes.push_back(std::move(scape));
     }
 
     for (auto& scape : m_soundScapes) {

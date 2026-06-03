@@ -19,7 +19,8 @@ target_link_libraries(
 		SFML::Graphics 
 		SFML::Audio
 		ImGui-SFML::ImGui-SFML
-		fmt::fmt)
+		fmt::fmt
+		nlohmann_json::nlohmann_json)
 		
 if(APPLE)
   target_link_libraries(FrogITApp PRIVATE "-framework Cocoa")

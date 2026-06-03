@@ -32,6 +32,9 @@ inline constexpr const char* SOUND_DIR_AMBIENT = "assets/sounds/ambient";
 inline constexpr const char* SOUND_KEY_PREFIX_LOOPING = "looping/";
 inline constexpr const char* SOUND_KEY_PREFIX_AMBIENT = "ambient/";
 
+// Frog phrases
+inline constexpr const char* PHRASES_FILE = "assets/phrases.json";
+
 // Frog management constants
 constexpr int FROG_COUNT_MAX = 200;
 constexpr int FROG_COUNT_MIN = 1;

@@ -4,9 +4,13 @@
 #include "ResourceManager.hpp"
 #include "WindowHandling.hpp"
 
+#include <array>
 #include <chrono>
 #include <cmath>
+#include <fstream>
 #include <functional>
+
+#include <nlohmann/json.hpp>
 
 Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
     : m_sprite(ResourceManager::getTexture(textureOpen))
@@ -20,6 +24,7 @@ Frog::Frog(const std::string& textureOpen, const std::string& textureClosed)
 
 const std::vector<std::string>& Frog::getPhrasesForHour(int hour)
 {
+    // Fallback phrases, used when assets/phrases.json is missing or malformed.
     static const std::vector<std::string> morning = {
         "Guten Morgen!\nSchon wach?", "Quak! Fruehstueck\nvergessen?", "Kaffee gefaellig?\n*quak*", "Noch muede?\nIch auch!", "Der fruehe Frosch\nfaengt die Fliege!"
     };
@@ -33,13 +38,46 @@ const std::vector<std::string>& Frog::getPhrasesForHour(int hour)
         "Feierabend!\n*quak quak*", "Ab ins Bett!\nQuaaak!", "Noch wach?\nIch auch... quak", "Gute Nacht!\n*leises quak*", "Schlaf gut!\nTraeume von\nFroeschen!"
     };
 
+    // Load the phrases file once and cache it. A bucket falls back to its
+    // hardcoded list if the file is missing, malformed, or has no entries for it.
+    static const auto buckets = []() -> std::array<std::vector<std::string>, 4> {
+        std::array<std::vector<std::string>, 4> result{ morning, midday, afternoon, evening };
+        static constexpr std::array<const char*, 4> keys{ "morning", "midday", "afternoon", "evening" };
+
+        std::ifstream in{ PHRASES_FILE };
+        if (!in) {
+            return result;
+        }
+        nlohmann::json root;
+        try {
+            root = nlohmann::json::parse(in);
+        } catch (...) {
+            return result;
+        }
+        for (std::size_t i = 0; i < keys.size(); ++i) {
+            if (!root.contains(keys[i]) || !root[keys[i]].is_array()) {
+                continue;
+            }
+            std::vector<std::string> phrases;
+            for (const auto& entry : root[keys[i]]) {
+                if (entry.is_string()) {
+                    phrases.push_back(entry.get<std::string>());
+                }
+            }
+            if (!phrases.empty()) {
+                result[i] = std::move(phrases);
+            }
+        }
+        return result;
+    }();
+
     if (hour >= 5 && hour < 11)
-        return morning;
+        return buckets[0];
     if (hour >= 11 && hour < 14)
-        return midday;
+        return buckets[1];
     if (hour >= 14 && hour < 18)
-        return afternoon;
-    return evening;
+        return buckets[2];
+    return buckets[3];
 }
 
 void Frog::randomizePosition(sf::Vector2u desktopSize)
@@ -195,7 +233,7 @@ void Frog::renderSpeechBubble(sf::RenderWindow& speechWindow,
                               const std::function<void(sf::RenderWindow&)>& setTopMost)
 {
     if (hasSpeechBubble()) {
-        // Only one speech window at a time — take over if a new frog speaks
+        // Only one speech window at a time ï¿½ take over if a new frog speaks
         if (this != activeSpeaker) {
             if (speechWindowOpen) {
                 speechWindow.close();

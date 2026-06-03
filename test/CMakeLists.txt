@@ -39,7 +39,8 @@ target_link_libraries(
           SFML::Graphics 
           SFML::Audio
         ImGui-SFML::ImGui-SFML
-          fmt::fmt)
+          fmt::fmt
+          nlohmann_json::nlohmann_json)
 
 target_include_directories(tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../src/FrogITApp")
 target_include_directories(tests PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")

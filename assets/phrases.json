@@ -1,0 +1,30 @@
+{
+  "morning": [
+    "Guten Morgen!\nSchon wach?",
+    "Quak! Fruehstueck\nvergessen?",
+    "Kaffee gefaellig?\n*quak*",
+    "Noch muede?\nIch auch!",
+    "Der fruehe Frosch\nfaengt die Fliege!"
+  ],
+  "midday": [
+    "Mittagspause!\n*quak quak*",
+    "Hunger? Ich hab\nnoch Fliegen!",
+    "Schon Mittag?\nWie die Zeit\nvergeht!",
+    "Quak! Nicht\nvergessen zu essen!",
+    "Pause machen\nist wichtig! *quak*"
+  ],
+  "afternoon": [
+    "Na, produktiv\nheute? *quak*",
+    "Ich beobachte\ndich... quak!",
+    "Noch ein\nbisschen arbeiten!",
+    "Quak! Fast\nFeierabend!",
+    "Frosch-Tipp:\nMal durchatmen!"
+  ],
+  "evening": [
+    "Feierabend!\n*quak quak*",
+    "Ab ins Bett!\nQuaaak!",
+    "Noch wach?\nIch auch... quak",
+    "Gute Nacht!\n*leises quak*",
+    "Schlaf gut!\nTraeume von\nFroeschen!"
+  ]
+}

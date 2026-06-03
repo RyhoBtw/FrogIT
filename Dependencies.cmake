@@ -12,6 +12,10 @@ function(FrogIT_setup_dependencies)
 	cpmaddpackage("gh:fmtlib/fmt#11.1.4")
 	endif()
 
+	if(NOT TARGET nlohmann_json::nlohmann_json)
+		cpmaddpackage("gh:nlohmann/json@3.11.3")
+	endif()
+
 	if(NOT TARGET Catch2::Catch2WithMain)
 	cpmaddpackage("gh:catchorg/Catch2@3.8.1")
 	endif()
