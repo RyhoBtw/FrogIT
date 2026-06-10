@@ -43,37 +43,37 @@ jobs:
       - name: Generate Summary
         run: |
           python3 - <<'EOF'
-          import xml.etree.ElementTree as ET, os
+          import xml.etree.ElementTree as ET, os, math
 
           tree = ET.parse("lizard_report.xml")
           root = tree.getroot()
 
-          items = root.findall(".//item")
+          # Only function-level items (first <measure type="Function">)
+          function_measure = root.find(".//measure[@type='Function']")
+          items = function_measure.findall("item")
+
           if not items:
               print("Keine Funktionen gefunden.")
               exit(0)
 
-          total_ccn   = 0
-          total_vol   = 0
-          count       = 0
-          violations  = []
+          total_ccn  = 0
+          total_vol  = 0
+          count      = 0
+          violations = []
 
           for item in items:
-              ccn    = float(item.get("cyclomatic_complexity", 0))
-              length = float(item.get("length", 0))
-              name   = item.get("name", "?")
-              file   = item.get("file", "?")
+              values = [v.text for v in item.findall("value")]
+              # values[0] = Nr., values[1] = NCSS, values[2] = CCN
+              ncss = float(values[1])
+              ccn  = float(values[2])
+              name = item.get("name", "?")
 
               total_ccn += ccn
+              total_vol += ncss * math.log2(max(ccn, 2))
               count     += 1
 
-              # Halstead Volume approximation: LOC * log2(max(CCN,2))
-              import math
-              vol = length * math.log2(max(ccn, 2))
-              total_vol += vol
-
-              if ccn > 10 or length > 75:
-                  violations.append((name, file, int(ccn), int(length)))
+              if ccn > 10 or ncss > 75:
+                  violations.append((name, int(ccn), int(ncss)))
 
           avg_ccn = total_ccn / count if count else 0
           avg_vol = total_vol / count if count else 0
@@ -90,15 +90,14 @@ jobs:
 
               if violations:
                   f.write("### ⚠️ Funktionen über Schwellwert (CCN > 10 oder Länge > 75)\n\n")
-                  f.write("| Funktion | Datei | CCN | Länge |\n")
-                  f.write("|----------|-------|-----|-------|\n")
-                  for name, file, ccn, length in violations:
-                      f.write(f"| `{name}` | `{file}` | {ccn} | {length} |\n")
+                  f.write("| Funktion | CCN | NCSS |\n")
+                  f.write("|----------|-----|------|\n")
+                  for name, ccn, ncss in violations:
+                      f.write(f"| `{name}` | {ccn} | {ncss} |\n")
               else:
                   f.write("✅ Alle Funktionen liegen innerhalb der Schwellwerte.\n")
           EOF
 
-      # Optionaler Qualitätsgatecheck: schlägt fehl wenn > 5 Verletzungen
       - name: Quality Gate
         run: |
           python3 - <<'EOF'
@@ -107,11 +106,14 @@ jobs:
           tree = ET.parse("lizard_report.xml")
           root = tree.getroot()
 
-          violations = [
-              item for item in root.findall(".//item")
-              if float(item.get("cyclomatic_complexity", 0)) > 10
-              or float(item.get("length", 0)) > 75
-          ]
+          function_measure = root.find(".//measure[@type='Function']")
+          violations = []
+          for item in function_measure.findall("item"):
+              values = [v.text for v in item.findall("value")]
+              ncss = float(values[1])
+              ccn  = float(values[2])
+              if ccn > 10 or ncss > 75:
+                  violations.append(item.get("name"))
 
           print(f"Verletzungen: {len(violations)}/5 erlaubt")
 
