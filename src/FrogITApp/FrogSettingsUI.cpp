@@ -46,7 +46,7 @@ namespace
     }
 }
 
-void FrogSettingsUI::render(SoundScapeManager& manager)
+void FrogSettingsUI::renderSoundscapeSelector(SoundScapeManager& manager)
 {
     auto& scapes = manager.soundScapes();
     const int active = manager.activeIndex();
@@ -63,9 +63,8 @@ void FrogSettingsUI::render(SoundScapeManager& manager)
                     m_lastEditedIndex = -1;
                 }
             }
-            if (selected) {
+            if (selected)
                 ImGui::SetItemDefaultFocus();
-            }
         }
         ImGui::EndCombo();
     }
@@ -82,17 +81,29 @@ void FrogSettingsUI::render(SoundScapeManager& manager)
         m_lastEditedIndex = -1;
     }
     ImGui::EndDisabled();
+}
 
-    if (manager.hasActive()) {
-        if (m_lastEditedIndex != active) {
-            const std::string& currentName = scapes[static_cast<std::size_t>(active)].name;
-            std::snprintf(m_nameBuffer, sizeof(m_nameBuffer), "%s", currentName.c_str());
-            m_lastEditedIndex = active;
-        }
-        if (ImGui::InputText("Name", m_nameBuffer, sizeof(m_nameBuffer))) {
-            manager.rename(active, std::string{ m_nameBuffer });
-        }
+void FrogSettingsUI::renderNameEditor(SoundScapeManager& manager)
+{
+    if (!manager.hasActive())
+        return;
+
+    auto& scapes = manager.soundScapes();
+    const int active = manager.activeIndex();
+
+    if (m_lastEditedIndex != active) {
+        const std::string& currentName = scapes[static_cast<std::size_t>(active)].name;
+        std::snprintf(m_nameBuffer, sizeof(m_nameBuffer), "%s", currentName.c_str());
+        m_lastEditedIndex = active;
     }
+    if (ImGui::InputText("Name", m_nameBuffer, sizeof(m_nameBuffer)))
+        manager.rename(active, std::string{ m_nameBuffer });
+}
+
+void FrogSettingsUI::render(SoundScapeManager& manager)
+{
+    renderSoundscapeSelector(manager);
+    renderNameEditor(manager);
 
     ImGui::Spacing();
     ImGui::Separator();

@@ -161,6 +161,63 @@ void WindowHandling::setWindowTopMost(sf::RenderWindow& window)
 }
 
 #ifdef __linux__
+namespace {
+    // Paints run-length encoded rectangles into a 1-bit pixmap.
+    // visible[y * w + x] == true means the pixel should be set (foreground).
+    void paintRunsToPixmap(Display* display, Pixmap mask, GC gc,
+                           unsigned int w, unsigned int h,
+                           const std::vector<bool>& visible)
+    {
+        XSetForeground(display, gc, 1);
+        for (unsigned int y = 0; y < h; ++y) {
+            unsigned int runStart = 0;
+            bool inRun = false;
+            for (unsigned int x = 0; x <= w; ++x) {
+                bool on = (x < w) && visible[static_cast<size_t>(y) * w + x];
+                if (on && !inRun) {
+                    runStart = x;
+                    inRun = true;
+                } else if (!on && inRun) {
+                    XFillRectangle(display, mask, gc, static_cast<int>(runStart),
+                                   static_cast<int>(y), x - runStart, 1);
+                    inRun = false;
+                }
+            }
+        }
+    }
+
+    // Flood-fills exterior transparent pixels from the image edges.
+    // Returns a grid where true = pixel is exterior (transparent and reachable from edge).
+    std::vector<bool> buildExteriorMap(const std::vector<bool>& opaque,
+                                       unsigned int w, unsigned int h)
+    {
+        std::vector<bool> exterior(static_cast<size_t>(w) * h, false);
+        std::vector<std::pair<unsigned int, unsigned int>> stack;
+
+        for (unsigned int x = 0; x < w; ++x) {
+            if (!opaque[x])                                         stack.emplace_back(x, 0u);
+            if (!opaque[static_cast<size_t>(h - 1) * w + x])       stack.emplace_back(x, h - 1);
+        }
+        for (unsigned int y = 1; y + 1 < h; ++y) {
+            if (!opaque[static_cast<size_t>(y) * w])                stack.emplace_back(0u, y);
+            if (!opaque[static_cast<size_t>(y) * w + w - 1])        stack.emplace_back(w - 1, y);
+        }
+
+        while (!stack.empty()) {
+            auto [sx, sy] = stack.back();
+            stack.pop_back();
+            auto idx = static_cast<size_t>(sy) * w + sx;
+            if (exterior[idx]) continue;
+            exterior[idx] = true;
+            if (sx > 0     && !opaque[idx - 1] && !exterior[idx - 1]) stack.emplace_back(sx - 1, sy);
+            if (sx + 1 < w && !opaque[idx + 1] && !exterior[idx + 1]) stack.emplace_back(sx + 1, sy);
+            if (sy > 0     && !opaque[idx - w] && !exterior[idx - w]) stack.emplace_back(sx, sy - 1);
+            if (sy + 1 < h && !opaque[idx + w] && !exterior[idx + w]) stack.emplace_back(sx, sy + 1);
+        }
+        return exterior;
+    }
+}
+
 void WindowHandling::applyShapeMask(sf::RenderWindow& window, const sf::Texture& texture, float scale, bool flipped)
 {
     Display* display = XOpenDisplay(nullptr);
@@ -175,33 +232,23 @@ void WindowHandling::applyShapeMask(sf::RenderWindow& window, const sf::Texture&
     auto scaledH = static_cast<unsigned int>(static_cast<float>(imgSize.y) * scale);
     if (scaledW == 0 || scaledH == 0) { XCloseDisplay(display); return; }
 
+    // Build scaled visibility grid
+    std::vector<bool> visible(static_cast<size_t>(scaledW) * scaledH, false);
+    for (unsigned int y = 0; y < scaledH; ++y) {
+        auto texY = std::min(static_cast<unsigned int>(static_cast<float>(y) / scale), imgSize.y - 1);
+        for (unsigned int x = 0; x < scaledW; ++x) {
+            auto texX = std::min(static_cast<unsigned int>(static_cast<float>(x) / scale), imgSize.x - 1);
+            if (flipped) texX = imgSize.x - 1 - texX;
+            visible[static_cast<size_t>(y) * scaledW + x] = image.getPixel(sf::Vector2u(texX, texY)).a > 64;
+        }
+    }
+
     Pixmap mask = XCreatePixmap(display, xwindow, scaledW, scaledH, 1);
     GC gc = XCreateGC(display, mask, 0, nullptr);
-
     XSetForeground(display, gc, 0);
     XFillRectangle(display, mask, gc, 0, 0, scaledW, scaledH);
 
-    XSetForeground(display, gc, 1);
-    for (unsigned int y = 0; y < scaledH; ++y) {
-        auto texY = std::min(static_cast<unsigned int>(static_cast<float>(y) / scale), imgSize.y - 1);
-        unsigned int runStart = 0;
-        bool inRun = false;
-        for (unsigned int x = 0; x <= scaledW; ++x) {
-            bool opaque = false;
-            if (x < scaledW) {
-                auto texX = std::min(static_cast<unsigned int>(static_cast<float>(x) / scale), imgSize.x - 1);
-                if (flipped) texX = imgSize.x - 1 - texX;
-                opaque = image.getPixel(sf::Vector2u(texX, texY)).a > 64;
-            }
-            if (opaque && !inRun) {
-                runStart = x;
-                inRun = true;
-            } else if (!opaque && inRun) {
-                XFillRectangle(display, mask, gc, static_cast<int>(runStart), static_cast<int>(y), x - runStart, 1);
-                inRun = false;
-            }
-        }
-    }
+    paintRunsToPixmap(display, mask, gc, scaledW, scaledH, visible);
 
     XShapeCombineMask(display, xwindow, ShapeBounding, 0, 0, mask, ShapeSet);
 
@@ -225,60 +272,24 @@ void WindowHandling::applyFilledShapeMask(sf::RenderWindow& window, const sf::Te
     auto w = imgSize.x;
     auto h = imgSize.y;
 
-    // Build boolean grid: true = opaque (part of frame border)
     std::vector<bool> opaque(static_cast<size_t>(w) * h, false);
     for (unsigned int y = 0; y < h; ++y)
         for (unsigned int x = 0; x < w; ++x)
             opaque[static_cast<size_t>(y) * w + x] = image.getPixel(sf::Vector2u(x, y)).a > 64;
 
-    // Flood-fill from edges to mark exterior transparent pixels
-    std::vector<bool> exterior(static_cast<size_t>(w) * h, false);
-    std::vector<std::pair<unsigned int, unsigned int>> stack;
-    // Seed all transparent edge pixels
-    for (unsigned int x = 0; x < w; ++x) {
-        if (!opaque[x]) stack.emplace_back(x, 0u);
-        if (!opaque[static_cast<size_t>(h - 1) * w + x]) stack.emplace_back(x, h - 1);
-    }
-    for (unsigned int y = 1; y + 1 < h; ++y) {
-        if (!opaque[static_cast<size_t>(y) * w]) stack.emplace_back(0u, y);
-        if (!opaque[static_cast<size_t>(y) * w + w - 1]) stack.emplace_back(w - 1, y);
-    }
-
-    while (!stack.empty()) {
-        auto [sx, sy] = stack.back();
-        stack.pop_back();
-        auto idx = static_cast<size_t>(sy) * w + sx;
-        if (exterior[idx]) continue;
-        exterior[idx] = true;
-        if (sx > 0     && !opaque[idx - 1]  && !exterior[idx - 1])  stack.emplace_back(sx - 1, sy);
-        if (sx + 1 < w && !opaque[idx + 1]  && !exterior[idx + 1])  stack.emplace_back(sx + 1, sy);
-        if (sy > 0     && !opaque[idx - w]  && !exterior[idx - w])  stack.emplace_back(sx, sy - 1);
-        if (sy + 1 < h && !opaque[idx + w]  && !exterior[idx + w])  stack.emplace_back(sx, sy + 1);
-    }
+    std::vector<bool> exterior = buildExteriorMap(opaque, w, h);
 
     // Shape mask = NOT exterior (opaque border + interior)
+    std::vector<bool> visible(static_cast<size_t>(w) * h);
+    for (size_t i = 0; i < visible.size(); ++i)
+        visible[i] = !exterior[i];
+
     Pixmap mask = XCreatePixmap(display, xwindow, w, h, 1);
     GC gc = XCreateGC(display, mask, 0, nullptr);
-
     XSetForeground(display, gc, 0);
     XFillRectangle(display, mask, gc, 0, 0, w, h);
 
-    XSetForeground(display, gc, 1);
-    for (unsigned int y = 0; y < h; ++y) {
-        unsigned int runStart = 0;
-        bool inRun = false;
-        for (unsigned int x = 0; x <= w; ++x) {
-            bool visible = (x < w) && !exterior[static_cast<size_t>(y) * w + x];
-            if (visible && !inRun) {
-                runStart = x;
-                inRun = true;
-            } else if (!visible && inRun) {
-                XFillRectangle(display, mask, gc, static_cast<int>(runStart),
-                               static_cast<int>(y), x - runStart, 1);
-                inRun = false;
-            }
-        }
-    }
+    paintRunsToPixmap(display, mask, gc, w, h, visible);
 
     XShapeCombineMask(display, xwindow, ShapeBounding, 0, 0, mask, ShapeSet);
 

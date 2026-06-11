@@ -22,6 +22,8 @@ class FrogApp
     void initFrogWindow(Frog& frog, unsigned int bPP);
     void updateFrogCount(int newCount);
     void renderTongues();
+    void processFrogWindowEvents();
+    void drawTongueForFrog(const Frog& frog, sf::Vector2i mousePos);
 
     sf::RenderWindow m_window;
     sf::Clock m_clock;

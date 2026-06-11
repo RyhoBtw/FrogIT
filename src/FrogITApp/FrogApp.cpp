@@ -79,21 +79,23 @@ FrogApp::~FrogApp()
     ImGui::SFML::Shutdown();
 }
 
-void FrogApp::processWindowEvents()
+void FrogApp::processFrogWindowEvents()
 {
-    // Process frog window events
     for (auto& frog : m_frogs) {
         while (const std::optional<sf::Event> frogEvent = frog->getWindow().pollEvent()) {
-            if (frogEvent->is<sf::Event::Closed>()) {
+            if (frogEvent->is<sf::Event::Closed>())
                 m_window.close();
-            }
             if (const auto* pressed = frogEvent->getIf<sf::Event::MouseButtonPressed>()) {
-                if (pressed->button == sf::Mouse::Button::Left) {
+                if (pressed->button == sf::Mouse::Button::Left)
                     frog->handleClick();
-                }
             }
         }
     }
+}
+
+void FrogApp::processWindowEvents()
+{
+    processFrogWindowEvents();
 
     while (const std::optional<sf::Event> event = m_window.pollEvent()) {
         ImGui::SFML::ProcessEvent(m_window, *event);
@@ -260,58 +262,53 @@ void FrogApp::renderTongues()
 
     for (auto& frog : m_frogs) {
         if (!frog->isTongueActive()) continue;
-
-        sf::Vector2f mouth = frog->getTongueMouthPosition();
-        sf::Vector2f tip(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
-        // Direction from mouth to cursor
-        sf::Vector2f dir = tip - mouth;
-        float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-
-        // Pull cursor toward frog via WinAPI
-#ifdef _WIN32
-        if (len > 1.f) {
-            sf::Vector2f norm = dir / len;
-            float pull = TONGUE_PULL_SPEED / FRAMERATE_LIMIT;
-            float moveDist = std::min(pull, len * 0.15f); // gentle pull
-            sf::Vector2f newPos = tip - norm * moveDist;
-            SetCursorPos(static_cast<int>(newPos.x), static_cast<int>(newPos.y));
-            tip = newPos;
-        }
-#endif
-
-        // Draw tongue as a thick line using a quad
-        if (len > 1.f) {
-            sf::Vector2f norm = dir / len;
-            sf::Vector2f perp(-norm.y, norm.x);
-            float half = TONGUE_WIDTH / 2.f;
-
-            sf::VertexArray quad(sf::PrimitiveType::TriangleStrip, 4);
-            quad[0].position = mouth + perp * half;
-            quad[1].position = mouth - perp * half;
-            quad[2].position = tip   + perp * half;
-            quad[3].position = tip   - perp * half;
-
-            // Tongue colour: pink-red, slightly transparent at tip
-            sf::Color baseColour(220, 60, 100, 230);
-            sf::Color tipColour (220, 60, 100, 160);
-            quad[0].color = baseColour;
-            quad[1].color = baseColour;
-            quad[2].color = tipColour;
-            quad[3].color = tipColour;
-
-            m_tongueWindow.draw(quad);
-
-            // Tip circle (small dot)
-            sf::CircleShape dot(TONGUE_WIDTH * 0.9f);
-            dot.setFillColor(tipColour);
-            dot.setOrigin({ TONGUE_WIDTH * 0.9f, TONGUE_WIDTH * 0.9f });
-            dot.setPosition(tip);
-            m_tongueWindow.draw(dot);
-        }
+        drawTongueForFrog(*frog, mousePos);
     }
 
     m_tongueWindow.display();
+}
+
+void FrogApp::drawTongueForFrog(const Frog& frog, sf::Vector2i mousePos)
+{
+    sf::Vector2f mouth = frog.getTongueMouthPosition();
+    sf::Vector2f tip(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+    sf::Vector2f dir = tip - mouth;
+    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+
+#ifdef _WIN32
+    if (len > 1.f) {
+        sf::Vector2f norm = dir / len;
+        float pull = TONGUE_PULL_SPEED / FRAMERATE_LIMIT;
+        float moveDist = std::min(pull, len * 0.15f);
+        sf::Vector2f newPos = tip - norm * moveDist;
+        SetCursorPos(static_cast<int>(newPos.x), static_cast<int>(newPos.y));
+        tip = newPos;
+    }
+#endif
+
+    if (len <= 1.f)
+        return;
+
+    sf::Vector2f norm = dir / len;
+    sf::Vector2f perp(-norm.y, norm.x);
+    float half = TONGUE_WIDTH / 2.f;
+
+    sf::Color baseColour(220, 60, 100, 230);
+    sf::Color tipColour (220, 60, 100, 160);
+
+    sf::VertexArray quad(sf::PrimitiveType::TriangleStrip, 4);
+    quad[0].position = mouth + perp * half;  quad[0].color = baseColour;
+    quad[1].position = mouth - perp * half;  quad[1].color = baseColour;
+    quad[2].position = tip   + perp * half;  quad[2].color = tipColour;
+    quad[3].position = tip   - perp * half;  quad[3].color = tipColour;
+    m_tongueWindow.draw(quad);
+
+    sf::CircleShape dot(TONGUE_WIDTH * 0.9f);
+    dot.setFillColor(tipColour);
+    dot.setOrigin({ TONGUE_WIDTH * 0.9f, TONGUE_WIDTH * 0.9f });
+    dot.setPosition(tip);
+    m_tongueWindow.draw(dot);
 }
 
 void FrogApp::updateFrogCount(int newCount)
